@@ -9,16 +9,18 @@
 ```
 chaebol-foundations/
 ├── index.html              # 본문 (data/ 폴더 JSON을 fetch로 로드)
+├── case-hyundai.html       # Case Deep Dive 01 — 현대차 정몽구재단 (5개 의혹 카테고리)
 ├── data/                   # 데이터 — 갱신할 때 여기만 만지면 됨
 │   ├── overview.json       # KPI · 3년 추세
 │   ├── ratio.json          # 73개 그룹 사업비 비율 (하위 17 · 상위 10)
 │   ├── delta.json          # 사업비 증감 10/10
 │   ├── structure.json      # 자산·수입·비용 구성 + 분배비용 상위 등
-│   ├── cases.json          # 9개 그룹 케이스 카드
+│   ├── cases.json          # 9개 그룹 케이스 카드 (carrier로 deep_dive_url 포함)
 │   ├── matrix.json         # 의결권 무력화 매트릭스 23행
 │   ├── deep-cases.json     # 5개 개별 케이스 심층 (타임라인) + 0원 사례
 │   ├── policy.json         # 세제 · 의결권 단계 · 시민단체 vs 재계
-│   └── sources.json        # 출처 링크 모음
+│   ├── sources.json        # 출처 링크 모음
+│   └── case-hyundai.json   # Case 01 데이터 (의혹 5개·타임라인 18년·SPC 거래·이사진)
 ├── docs/                   # 추가 문서
 │   ├── DATA.md             # 데이터 스키마
 │   ├── DEPLOY.md           # GitHub Pages · EC2 배포 계획
@@ -27,6 +29,20 @@ chaebol-foundations/
 ├── .gitignore
 └── README.md
 ```
+
+## 케이스 딥다이브
+
+대시보드의 9개 그룹 카드는 「수치와 정황」을 보여주지만, "왜 문제인가"의 인과 구조는 별도 케이스 페이지로 분리.
+
+- **Case 01 · 현대차 정몽구재단** (`case-hyundai.html`) — 1조원 사회환원 약속 18년 추적, 2022.1 SPC 거래로 정의선 지분이 사익편취 임계점(20%)에 정확히 정렬된 정황까지
+
+다음 후보: SM 필의료재단 / DL 통일과나눔 → KCGI / DB김준기재단 / LG 상속분쟁
+
+새 케이스를 추가하려면:
+1. `data/case-{group}.json` 데이터 작성 (5개 의혹·타임라인·핵심 숫자·이사진·출처)
+2. `case-{group}.html`은 `case-hyundai.html` 복제 후 데이터 경로만 교체
+3. `data/cases.json`의 해당 그룹 카드에 `"deep_dive_url": "case-{group}.html"` 추가
+4. `index.html` 상단 배너에 링크 추가
 
 ## 로컬에서 보기
 

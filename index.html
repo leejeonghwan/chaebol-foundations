@@ -114,6 +114,15 @@
   </p>
 </div>
 
+<!-- DEEP DIVE BANNER -->
+<div class="card mb-12 p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-3" style="background: var(--bg-3); border-color: var(--accent)">
+  <div>
+    <div class="mono text-xs uppercase tracking-widest accent mb-1">Case Deep Dives 진행 중</div>
+    <div class="text-base">개별 그룹 의혹 구조를 5개 카테고리(승계·탈세·일감몰아주기·사익편취 우회·자금 사용)로 풀어낸 케이스 페이지.</div>
+  </div>
+  <a href="case-hyundai.html" class="mono text-xs accent shrink-0">→ Case 01 · 현대차 정몽구재단</a>
+</div>
+
 <div class="grid grid-cols-1 lg:grid-cols-[180px_1fr] gap-10">
 
 <aside class="hidden lg:block">
@@ -370,7 +379,7 @@ function renderKPI(d) {
 
 function renderCases(d) {
   document.getElementById('cases-grid').innerHTML = d.cards.map(c => `
-    <div class="card case-card p-6">
+    <div class="card case-card p-6 flex flex-col">
       <div class="flex items-baseline justify-between mb-3">
         <div>
           <div class="mono text-xs mute uppercase">${c.group}</div>
@@ -381,7 +390,8 @@ function renderCases(d) {
       <div class="space-y-2 mb-3">
         ${c.stats.map(s => `<div class="stat-line"><span class="dim text-xs">${s.label}</span><span class="mono text-sm ${s.tone ? TONE_TO_CLASS[s.tone] : ''}">${s.value}</span></div>`).join('')}
       </div>
-      <p class="text-xs dim leading-relaxed">${c.note}</p>
+      <p class="text-xs dim leading-relaxed flex-1">${c.note}</p>
+      ${c.deep_dive_url ? `<a href="${c.deep_dive_url}" class="mt-4 pt-3 border-t border-line text-xs mono accent block">CASE DEEP DIVE →</a>` : ''}
     </div>`).join('');
   document.getElementById('cases-extra').innerHTML = `<span class="accent mono uppercase tracking-wider mr-2">참고</span>${d.extra_gc_nokvit}`;
 }

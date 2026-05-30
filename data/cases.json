@@ -19,6 +19,7 @@
       "title": "현대차정몽구재단",
       "tag": "의결권 무력화",
       "tag_class": "danger",
+      "deep_dive_url": "case-hyundai.html",
       "stats": [
         { "label": "사업비 절대액 증감", "value": "+220억 (증가 1위)", "tone": "success" },
         { "label": "보유 주식 가치", "value": "4,645억 · 100% 특수관계" },
