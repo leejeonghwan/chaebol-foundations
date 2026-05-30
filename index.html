@@ -101,7 +101,7 @@
     대기업집단 공익법인 결산 스캔
   </h1>
   <p class="text-xl dim leading-relaxed mb-4">
-    9개 그룹 의결권 케이스 매트릭스 · 73개 그룹 사업비 비율 · 제도와 시민단체·재계 입장
+    232개 공익법인의 「두 얼굴」 — 공식 사업과 우회 지배. 6개 케이스에서 발견한 5가지 패턴, 4가지 제도 사각지대
   </p>
   <div class="flex flex-wrap gap-x-6 gap-y-2 mono text-xs mute" id="meta-line">
     <span>로딩 중...</span>
@@ -124,8 +124,11 @@
   <div class="sidebar">
     <div class="mono text-xs uppercase tracking-widest dim mb-4 pl-3">목차</div>
     <nav class="space-y-0">
-      <a class="nav-link" href="#kpi">핵심 지표</a>
-      <a class="nav-link" href="#cases">9개 그룹 케이스</a>
+      <a class="nav-link" href="#hero">한 컷 진단</a>
+      <a class="nav-link" href="#two-faces">두 얼굴</a>
+      <a class="nav-link" href="#patterns">6개 케이스 5가지 패턴</a>
+      <a class="nav-link" href="#loopholes">제도 사각지대</a>
+      <a class="nav-link" href="#cases">11개 그룹 매트릭스</a>
       <a class="nav-link" href="#ratio">사업비 비율</a>
       <a class="nav-link" href="#matrix">의결권 무력화 매트릭스</a>
       <a class="nav-link" href="#deep">5개 개별 케이스 심층</a>
@@ -142,9 +145,44 @@
 
 <main class="min-w-0">
 
-<section id="kpi" class="mb-20">
-  <h2 class="mono text-xs uppercase tracking-widest dim mb-4">핵심 지표</h2>
-  <div id="kpi-grid" class="grid grid-cols-2 md:grid-cols-5 gap-3"><div class="loading">loading...</div></div>
+<!-- HERO — 한 컷 진단 -->
+<section id="hero" class="mb-20">
+  <div class="card p-8 md:p-10" style="background: linear-gradient(135deg, var(--bg-2) 0%, var(--bg-3) 100%); border-color: var(--accent);">
+    <div class="mono text-xs uppercase tracking-widest accent mb-3">한 컷 진단</div>
+    <h2 id="hero-headline" class="text-3xl md:text-4xl font-bold serif section-title mb-3"><span class="loading">loading...</span></h2>
+    <p id="hero-subhead" class="text-base dim leading-relaxed mb-8 max-w-4xl"></p>
+    <div id="hero-stats" class="grid grid-cols-2 md:grid-cols-5 gap-3"></div>
+  </div>
+</section>
+
+<!-- TWO FACES — 공익법인의 두 얼굴 -->
+<section id="two-faces" class="mb-20">
+  <h2 class="text-3xl font-bold section-title serif mb-2" id="two-faces-title">공익법인의 두 얼굴</h2>
+  <p class="text-sm dim mb-6 leading-relaxed" id="two-faces-sub"></p>
+  <div class="grid md:grid-cols-2 gap-4">
+    <div class="card p-6" id="two-faces-official">
+      <div class="loading">loading...</div>
+    </div>
+    <div class="card p-6" id="two-faces-shadow" style="border-color: var(--danger);">
+      <div class="loading">loading...</div>
+    </div>
+  </div>
+</section>
+
+<!-- PATTERNS — 6개 케이스 5가지 패턴 -->
+<section id="patterns" class="mb-20">
+  <h2 class="text-3xl font-bold section-title serif mb-2" id="patterns-title">6개 케이스에서 발견한 5가지 우회 패턴</h2>
+  <p class="text-sm dim mb-6 leading-relaxed" id="patterns-sub"></p>
+  <div id="patterns-list" class="space-y-3"><div class="loading">loading...</div></div>
+  <div id="patterns-footer" class="card-3 p-4 mt-4 text-xs dim leading-relaxed"></div>
+</section>
+
+<!-- LOOPHOLES — 제도가 못 잡는 4가지 사각지대 -->
+<section id="loopholes" class="mb-20">
+  <h2 class="text-3xl font-bold section-title serif mb-2" id="loopholes-title">제도가 못 잡는 4가지 사각지대</h2>
+  <p class="text-sm dim mb-6 leading-relaxed" id="loopholes-sub"></p>
+  <div id="loopholes-grid" class="grid md:grid-cols-2 gap-4"></div>
+  <div id="loopholes-footer" class="card-3 p-4 mt-4 text-xs dim leading-relaxed"></div>
 </section>
 
 <section id="cases" class="mb-20">
@@ -330,11 +368,14 @@ const gridStyleNoX = { grid: { display: false }, ticks: { color: COLORS.dim, fon
 // ============================================================
 // LOAD ALL DATA
 // ============================================================
-const dataFiles = ['overview', 'ratio', 'delta', 'structure', 'cases', 'matrix', 'deep-cases', 'policy', 'sources'];
+const dataFiles = ['overview', 'patterns', 'ratio', 'delta', 'structure', 'cases', 'matrix', 'deep-cases', 'policy', 'sources'];
 Promise.all(dataFiles.map(f => fetch(`data/${f}.json`).then(r => { if (!r.ok) throw new Error(f); return r.json(); })))
-  .then(([overview, ratio, delta, structure, cases, matrix, deepCases, policy, sources]) => {
+  .then(([overview, patterns, ratio, delta, structure, cases, matrix, deepCases, policy, sources]) => {
     renderMeta(overview);
-    renderKPI(overview);
+    renderHero(patterns.hero);
+    renderTwoFaces(patterns.two_faces);
+    renderPatterns(patterns.patterns);
+    renderLoopholes(patterns.loopholes);
     renderCases(cases);
     renderRatioSection(ratio);
     renderMatrix(matrix);
@@ -366,11 +407,105 @@ function renderMeta(d) {
 }
 
 function renderKPI(d) {
+  // (legacy) — hero로 대체됨, 호출 안 함
   document.getElementById('kpi-grid').innerHTML = d.kpi.map(k => `
     <div class="card p-5">
       <div class="mono text-3xl font-bold mb-1 ${k.tone ? TONE_TO_CLASS[k.tone] : ''}">${k.value}<span class="text-base dim ml-1">${k.unit}</span></div>
       <div class="text-xs dim leading-snug">${k.label}</div>
     </div>`).join('');
+}
+
+function renderHero(d) {
+  document.getElementById('hero-headline').textContent = d.headline;
+  document.getElementById('hero-subhead').textContent = d.subhead;
+  document.getElementById('hero-stats').innerHTML = d.stats.map(s => {
+    const colorClass = s.tone === 'danger' ? 'danger' : s.tone === 'accent' ? 'accent' : '';
+    return `<div class="card-3 p-4">
+      <div class="mono text-2xl font-bold mb-1 ${colorClass}">${s.value}<span class="text-sm dim ml-1">${s.unit}</span></div>
+      <div class="text-xs dim leading-snug">${s.label}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderTwoFaces(d) {
+  document.getElementById('two-faces-title').textContent = d.title;
+  document.getElementById('two-faces-sub').textContent = d.subtitle;
+
+  const officialHTML = `
+    <div class="flex items-center gap-2 mb-4">
+      <div class="w-2 h-2 rounded-full" style="background: var(--success)"></div>
+      <h3 class="font-bold text-lg">${d.official.title}</h3>
+    </div>
+    <div class="space-y-1">
+      ${d.official.items.map(it => `
+        <div class="stat-line">
+          <div class="flex-1">
+            <div class="text-sm">${it.label}</div>
+            ${it.note ? `<div class="text-xs mute mt-1">${it.note}</div>` : ''}
+          </div>
+          <div class="mono text-sm font-semibold success" style="text-align: right;">${it.value}</div>
+        </div>`).join('')}
+    </div>`;
+  document.getElementById('two-faces-official').innerHTML = officialHTML;
+
+  const shadowHTML = `
+    <div class="flex items-center gap-2 mb-4">
+      <div class="w-2 h-2 rounded-full" style="background: var(--danger)"></div>
+      <h3 class="font-bold text-lg">${d.shadow.title}</h3>
+    </div>
+    <div class="space-y-1">
+      ${d.shadow.items.map(it => `
+        <div class="stat-line">
+          <div class="flex-1">
+            <div class="text-sm">${it.label}</div>
+            ${it.note ? `<div class="text-xs mute mt-1">${it.note}</div>` : ''}
+          </div>
+          <div class="mono text-sm font-semibold danger" style="text-align: right;">${it.value}</div>
+        </div>`).join('')}
+    </div>`;
+  document.getElementById('two-faces-shadow').innerHTML = shadowHTML;
+}
+
+function renderPatterns(d) {
+  document.getElementById('patterns-title').textContent = d.title;
+  document.getElementById('patterns-sub').textContent = d.subtitle;
+  document.getElementById('patterns-list').innerHTML = d.rows.map((r, i) => `
+    <details class="card p-6" ${i === 0 ? 'open' : ''}>
+      <summary>
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex items-start gap-3 flex-1">
+            <span class="chev accent mono mt-1">▶</span>
+            <h3 class="text-lg font-bold">${r.pattern}</h3>
+          </div>
+          <span class="pill ${PILL_BY_CLASS[r.tone] || 'pill-mute'} shrink-0">${r.instances.length}건</span>
+        </div>
+      </summary>
+      <div class="mt-5 ml-7 space-y-3">
+        ${r.instances.map(inst => `
+          <div class="card-3 p-4 flex items-start gap-3">
+            <span class="pill pill-mute shrink-0">${inst.group}</span>
+            <div class="flex-1 text-sm dim leading-relaxed">${inst.detail}</div>
+            ${inst.url ? `<a href="${inst.url}" class="mono text-xs accent shrink-0">상세 →</a>` : '<span class="mono text-xs mute shrink-0">미작성</span>'}
+          </div>`).join('')}
+      </div>
+    </details>`).join('');
+  document.getElementById('patterns-footer').innerHTML = `<span class="accent mono uppercase tracking-wider mr-2">읽기</span>${d.footer_note}`;
+}
+
+function renderLoopholes(d) {
+  document.getElementById('loopholes-title').textContent = d.title;
+  document.getElementById('loopholes-sub').textContent = d.subtitle;
+  document.getElementById('loopholes-grid').innerHTML = d.rows.map(r => `
+    <div class="card p-6" style="border-color: var(--danger);">
+      <h3 class="font-bold mb-3">${r.loophole}</h3>
+      <p class="text-sm dim leading-relaxed mb-4">${r.summary}</p>
+      <div class="card-3 p-3">
+        <div class="text-xs mute mono uppercase tracking-wider mb-1">대표 케이스</div>
+        <div class="text-sm">${r.case}</div>
+        ${r.url ? `<a href="${r.url}" class="mono text-xs accent mt-2 inline-block">→ 케이스 페이지</a>` : ''}
+      </div>
+    </div>`).join('');
+  document.getElementById('loopholes-footer').innerHTML = `<span class="danger mono uppercase tracking-wider mr-2">맥락</span>${d.footer_note}`;
 }
 
 function renderCases(d) {
