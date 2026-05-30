@@ -1,0 +1,36 @@
+{
+  "source": "CEO스코어 (2023 → 2024 그룹 단위 합산)",
+  "unit": "억원",
+  "down": [
+    { "group": "HD현대", "change": -1961 },
+    { "group": "포스코", "change": -269 },
+    { "group": "SK", "change": -69 },
+    { "group": "네이버", "change": -63 },
+    { "group": "카카오", "change": -59 },
+    { "group": "LG", "change": -40 },
+    { "group": "농협", "change": -36 },
+    { "group": "SM", "change": -19 },
+    { "group": "삼성", "change": -18 },
+    { "group": "KT", "change": -15 }
+  ],
+  "up": [
+    { "group": "현대자동차", "change": 220 },
+    { "group": "한진", "change": 163 },
+    { "group": "OCI", "change": 78 },
+    { "group": "GS", "change": 53 },
+    { "group": "파라다이스", "change": 44 },
+    { "group": "한화", "change": 33 },
+    { "group": "부영", "change": 22 },
+    { "group": "효성", "change": 19 },
+    { "group": "삼천리", "change": 16 },
+    { "group": "글로벌세아", "change": 16 }
+  ],
+  "summary": {
+    "전체_188곳_중_감소": 83,
+    "감소_비중_퍼센트": 44.1,
+    "HD현대_2023_사업비_억": 30927,
+    "HD현대_2024_사업비_억": 28966,
+    "현대자동차_2023_사업비_억": 3121,
+    "현대자동차_2024_사업비_억": 3341
+  }
+}

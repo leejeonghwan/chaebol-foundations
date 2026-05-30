@@ -1,0 +1,36 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node (예정)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+package-lock.json
+
+# Python (예정)
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+
+# Logs
+*.log
+
+# Temp
+tmp/
+.cache/
+
+# Scraped raw data (별도 백업 권장, repo에는 가공된 JSON만)
+scripts/raw/
+scripts/*.cache.json

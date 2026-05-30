@@ -1,0 +1,58 @@
+{
+  "groups": [
+    {
+      "label": "공정위",
+      "items": [
+        { "title": "2023.12.18 공시대상기업집단 비영리법인 운영현황", "url": "https://m.korea.kr/briefing/pressReleaseView.do?newsId=156605996" },
+        { "title": "2024.5 주식소유현황", "url": "https://www.kfcf.or.kr/news/news/read.do?no=2824" },
+        { "title": "2025.5 주식소유현황", "url": "https://www.kfcf.or.kr/news/news/read.do?no=3236" },
+        { "title": "2025년 공시이행 점검결과", "url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156737068" },
+        { "title": "2024년 내부거래 현황", "url": "https://www.korea.kr/briefing/policyBriefingView.do?newsId=156732888" }
+      ]
+    },
+    {
+      "label": "국세청",
+      "items": [
+        { "title": "한국세정신문 — 2026 공익법인 연차보고서 정리", "url": "https://www.taxtimes.co.kr/news/article.html?no=275234" },
+        { "title": "공익법인 결산서류 공시시스템", "url": "https://teht.hometax.go.kr/websquare/websquare.html?w2xPath=/ui/sf/a/c/UTESFACI01.xml" }
+      ]
+    },
+    {
+      "label": "CEO스코어",
+      "items": [
+        { "title": "뉴스스페이스 — 73개 그룹 188개 공익법인 사업수행비용 (2025.9)", "url": "https://www.newsspace.kr/news/article.html?no=9608" },
+        { "title": "1코노미뉴스 — KCC 1.4%", "url": "https://www.1conomynews.co.kr/news/articleView.html?idxno=43703" }
+      ]
+    },
+    {
+      "label": "프레스나인 시리즈",
+      "items": [
+        { "title": "삼성생명·삼성물산", "url": "https://www.press9.kr/news/articleView.html?idxno=55304" },
+        { "title": "DB김준기재단", "url": "https://www.press9.kr/news/articleView.html?idxno=55311" },
+        { "title": "LG家 상속분쟁", "url": "https://www.press9.kr/news/articleView.html?idxno=55322" },
+        { "title": "정몽구재단·글로비스", "url": "https://www.press9.kr/news/articleView.html?idxno=55335" },
+        { "title": "GC녹십자", "url": "https://www.press9.kr/news/articleView.html?idxno=55339" },
+        { "title": "롯데재단", "url": "https://www.press9.kr/news/articleView.html?idxno=55343" },
+        { "title": "DL 통일과나눔", "url": "https://www.press9.kr/news/articleView.html?idxno=55350" },
+        { "title": "아모레퍼시픽 서경배", "url": "https://www.press9.kr/news/articleView.html?idxno=55370" }
+      ]
+    },
+    {
+      "label": "제도·세제",
+      "items": [
+        { "title": "서울경제 — 한경연 5%룰 손봐야", "url": "https://www.sedaily.com/NewsView/2DADFIWKF3" },
+        { "title": "한경연 보고서", "url": "https://www.keri.org/post/공익법인-활성화를-위한-상속세제-개선방안" },
+        { "title": "경향 — 증여세 완화 지배력 우려", "url": "https://www.khan.co.kr/article/202406201717001" }
+      ]
+    },
+    {
+      "label": "전자신문",
+      "items": [
+        { "title": "2023.12 공익법인 지배구조 5년전 보다 개선", "url": "https://www.etnews.com/20231218000074" }
+      ]
+    }
+  ],
+  "extra_pickup": [
+    "추가 취재 포인트는 docs/NEXT.md 참고"
+  ]
+}
