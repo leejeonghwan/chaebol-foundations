@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>전체 분석 — 대기업집단 공익법인 결산 스캔</title>
+<meta name="description" content="공익법인의 두 얼굴·5가지 우회 패턴·4가지 제도 사각지대·의결권 매트릭스·사업비 통계·시민단체 vs 재계 입장까지 한 페이지 종합 분석.">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Serif+KR:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a; --bg-2: #111111; --bg-3: #161616; --bg-4: #1c1c1c;
+    --line: #262626; --line-2: #333333;
+    --text: #e5e5e5; --text-dim: #a3a3a3; --text-mute: #737373;
+    --accent: #fbbf24; --accent-soft: #fde68a; --accent-2: #fb923c;
+    --danger: #ef4444; --danger-soft: #fca5a5;
+    --success: #34d399; --blue: #60a5fa; --purple: #a78bfa; --pink: #f472b6;
+  }
+  * { font-family: 'IBM Plex Sans KR', -apple-system, sans-serif; }
+  body { background: var(--bg); color: var(--text); }
+  .mono { font-family: 'JetBrains Mono', monospace; font-feature-settings: 'tnum'; }
+  .serif { font-family: 'Noto Serif KR', serif; }
+  .card { background: var(--bg-2); border: 1px solid var(--line); }
+  .card-3 { background: var(--bg-3); border: 1px solid var(--line); }
+  .card-4 { background: var(--bg-4); border: 1px solid var(--line); }
+  .accent { color: var(--accent); } .accent-2 { color: var(--accent-2); }
+  .danger { color: var(--danger); } .success { color: var(--success); } .blue { color: var(--blue); }
+  .dim { color: var(--text-dim); } .mute { color: var(--text-mute); }
+  .border-line { border-color: var(--line); }
+  .tab-active { background: var(--accent); color: #0a0a0a; }
+  .tab-inactive { background: var(--bg-3); color: var(--text-dim); }
+  .tab-inactive:hover { background: var(--bg-4); color: var(--text); }
+  .section-title { letter-spacing: -0.02em; }
+  table { border-collapse: collapse; width: 100%; }
+  td, th { border-color: var(--line); }
+  th { color: var(--text-dim); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+  td { font-size: 13px; }
+  tbody tr:hover { background: var(--bg-3); }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  details > summary { list-style: none; cursor: pointer; }
+  details > summary::-webkit-details-marker { display: none; }
+  details[open] .chev { transform: rotate(90deg); }
+  .chev { transition: transform 0.2s; display: inline-block; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-family: 'JetBrains Mono'; }
+  .pill-danger { background: rgba(239,68,68,0.12); color: var(--danger-soft); border: 1px solid rgba(239,68,68,0.3); }
+  .pill-warn { background: rgba(251,146,60,0.12); color: var(--accent-2); border: 1px solid rgba(251,146,60,0.3); }
+  .pill-accent { background: rgba(251,191,36,0.12); color: var(--accent-soft); border: 1px solid rgba(251,191,36,0.3); }
+  .pill-success { background: rgba(52,211,153,0.12); color: var(--success); border: 1px solid rgba(52,211,153,0.3); }
+  .pill-mute { background: var(--bg-3); color: var(--text-dim); border: 1px solid var(--line); }
+  .sidebar { position: sticky; top: 32px; }
+  .nav-link { display: block; padding: 6px 10px; border-left: 2px solid transparent; color: var(--text-mute); font-size: 12px; transition: all 0.15s; cursor: pointer; }
+  .nav-link:hover { color: var(--text); border-left-color: var(--line-2); text-decoration: none; }
+  .nav-link.active { color: var(--accent); border-left-color: var(--accent); }
+  .stat-line { border-bottom: 1px dashed var(--line); padding: 8px 0; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .stat-line:last-child { border-bottom: 0; }
+  .quote { border-left: 3px solid var(--accent); padding-left: 16px; font-style: italic; color: var(--text-dim); }
+  .matrix-cell { padding: 6px 8px; font-size: 11px; }
+  .table-search { background: var(--bg-3); border: 1px solid var(--line); padding: 8px 12px; color: var(--text); width: 100%; border-radius: 4px; font-size: 13px; }
+  .table-search:focus { outline: none; border-color: var(--accent); }
+  .sortable { cursor: pointer; user-select: none; }
+  .sortable:hover { color: var(--text); }
+  .sortable::after { content: ' ⇅'; opacity: 0.4; }
+  .sortable.sort-asc::after { content: ' ↑'; opacity: 1; color: var(--accent); }
+  .sortable.sort-desc::after { content: ' ↓'; opacity: 1; color: var(--accent); }
+  .scroll-y { max-height: 480px; overflow-y: auto; }
+  .evidence-line { padding-left: 16px; border-left: 2px solid var(--line); margin-bottom: 8px; font-size: 13px; line-height: 1.7; color: var(--text-dim); }
+  .loading { color: var(--text-mute); text-align: center; padding: 40px; font-family: 'JetBrains Mono'; font-size: 12px; }
+  #error-box { display: none; background: rgba(239,68,68,0.1); border: 1px solid var(--danger); padding: 20px; border-radius: 6px; margin: 40px 0; color: var(--danger-soft); }
+  .breadcrumb { color: var(--text-mute); font-size: 13px; }
+  .breadcrumb a { color: var(--text-dim); }
+</style>
+</head>
+<body class="min-h-screen">
+
+<div class="max-w-[1400px] mx-auto px-6 py-10">
+
+<div class="breadcrumb mb-6">
+  <a href="index.html">← 대기업집단 공익법인 결산 스캔</a> &nbsp;/&nbsp; 전체 분석
+</div>
+
+<header class="mb-12 pb-8 border-b" style="border-color: var(--line-2)">
+  <div class="flex items-center gap-3 mb-3">
+    <div class="w-2 h-2 rounded-full" style="background: var(--accent)"></div>
+    <span class="mono text-xs uppercase tracking-widest dim">analysis</span>
+    <span class="mono text-xs mute">— 패턴 · 사각지대 · 통계 · 제도 종합</span>
+  </div>
+  <h1 class="text-4xl md:text-5xl font-bold leading-tight section-title mb-3 serif">
+    전체 분석
+  </h1>
+  <p class="text-xl dim leading-relaxed mb-4">
+    공익법인의 두 얼굴 · 8개 케이스에서 발견한 5가지 패턴 · 4가지 제도 사각지대 · 의결권 매트릭스 · 사업비 통계 · 시민단체 vs 재계 입장
+  </p>
+  <div class="text-sm dim leading-relaxed max-w-3xl">
+    개별 그룹 케이스 8개의 패턴과 정황을 한 화면에서 비교할 수 있는 종합 분석. 「현황」 통계(사업비·자산·기부금)와 「문제」 패턴(우회 매각·5%룰 우회·그림자 재단·개인회사·사업비 회피)을 함께 본다.
+  </div>
+</header>
+
+<div id="error-box">
+  <strong>데이터 로딩 실패</strong>
+  <p class="mt-2 text-sm">file:// 프로토콜이면 fetch가 막힙니다. <code>python3 -m http.server</code>로 띄워주세요.</p>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-[180px_1fr] gap-10">
+
+<aside class="hidden lg:block">
+  <div class="sidebar">
+    <div class="mono text-xs uppercase tracking-widest dim mb-4 pl-3">목차</div>
+    <nav class="space-y-0">
+      <a class="nav-link" href="#two-faces">두 얼굴</a>
+      <a class="nav-link" href="#patterns">5가지 패턴</a>
+      <a class="nav-link" href="#loopholes">제도 사각지대</a>
+      <a class="nav-link" href="#matrix">의결권 무력화</a>
+      <a class="nav-link" href="#deep">5개 0원 사례</a>
+      <a class="nav-link" href="#policy">제도 · 세제</a>
+      <a class="nav-link" href="#sides">시민단체 vs 재계</a>
+      <a class="nav-link" href="#ratio">사업비 비율</a>
+      <a class="nav-link" href="#delta">사업비 증감</a>
+      <a class="nav-link" href="#structure">자산·수입·비용</a>
+      <a class="nav-link" href="#trend">3년 추세</a>
+      <a class="nav-link" href="#sources">출처</a>
+    </nav>
+    <div class="mt-8 pt-6 border-t" style="border-color: var(--line)">
+      <a href="index.html" class="nav-link" style="color: var(--accent)">← 메인 대시보드</a>
+    </div>
+  </div>
+</aside>
+
+<main class="min-w-0">
+
+<!-- TWO FACES -->
+<section id="two-faces" class="mb-20">
+  <h2 class="text-3xl font-bold section-title serif mb-2" id="two-faces-title">공익법인의 두 얼굴</h2>
+  <p class="text-sm dim mb-6 leading-relaxed" id="two-faces-sub"></p>
+  <div class="grid md:grid-cols-2 gap-4">
+    <div class="card p-6" id="two-faces-official"><div class="loading">loading...</div></div>
+    <div class="card p-6" id="two-faces-shadow" style="border-color: var(--danger);"><div class="loading">loading...</div></div>
+  </div>
+</section>
+
+<!-- PATTERNS -->
+<section id="patterns" class="mb-20">
+  <h2 class="text-3xl font-bold section-title serif mb-2" id="patterns-title">8개 케이스에서 발견한 5가지 우회 패턴</h2>
+  <p class="text-sm dim mb-6 leading-relaxed" id="patterns-sub"></p>
+  <div id="patterns-list" class="space-y-3"><div class="loading">loading...</div></div>
+  <div id="patterns-footer" class="card-3 p-4 mt-4 text-xs dim leading-relaxed"></div>
+</section>
+
+<!-- LOOPHOLES -->
+<section id="loopholes" class="mb-20">
+  <h2 class="text-3xl font-bold section-title serif mb-2" id="loopholes-title">제도가 못 잡는 4가지 사각지대</h2>
+  <p class="text-sm dim mb-6 leading-relaxed" id="loopholes-sub"></p>
+  <div id="loopholes-grid" class="grid md:grid-cols-2 gap-4"></div>
+  <div id="loopholes-footer" class="card-3 p-4 mt-4 text-xs dim leading-relaxed"></div>
+</section>
+
+<!-- 의결권 무력화 매트릭스 -->
+<section id="matrix" class="mb-20">
+  <h2 class="text-3xl font-bold section-title serif mb-2">의결권 무력화 매트릭스</h2>
+  <p class="text-sm dim mb-6 leading-relaxed">
+    상호출자제한기업집단 소속 공익법인이 보유 중인 계열사 주식 중 의결권이 제한·불가능한 항목. 출처: 프레스나인 「공익법인 의결권」 시리즈(2023.5) — 국세청 공익법인 현황공시 기반.
+  </p>
+  <div class="card overflow-hidden">
+    <div class="overflow-x-auto">
+      <table>
+        <thead style="background: var(--bg-3);">
+          <tr class="border-b" style="border-color: var(--line-2)">
+            <th class="text-left matrix-cell">그룹</th>
+            <th class="text-left matrix-cell">재단</th>
+            <th class="text-left matrix-cell">보유 계열사</th>
+            <th class="text-right matrix-cell">지분율</th>
+            <th class="text-left matrix-cell">의결권 상태</th>
+            <th class="text-left matrix-cell">사유</th>
+          </tr>
+        </thead>
+        <tbody id="matrix-body"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 5개 개별 케이스 심층 (deep-cases) -->
+<section id="deep" class="mb-20">
+  <h2 class="text-3xl font-bold section-title serif mb-2">사업비 0원·승계 도구화 5개 핵심 케이스 (요약)</h2>
+  <p class="text-sm dim mb-6">현대차·LG·DL·DB·SM 5개 케이스의 핵심 사실을 시간선 요약으로. 더 깊은 분석은 각 그룹 케이스 페이지로.</p>
+  <div id="deep-list" class="space-y-3"><div class="loading">loading...</div></div>
+</section>
+
+<!-- 제도·세제 -->
+<section id="policy" class="mb-20">
+  <h2 class="text-3xl font-bold section-title serif mb-2">제도 · 세제 맥락</h2>
+  <p class="text-sm dim mb-6">상속·증여세 면제 5% 한도(상호출자제한기업집단) vs 미국·일본 20~50%. 의결권 단계 축소 2023~2026.</p>
+  <div id="policy-grid" class="grid md:grid-cols-2 gap-4"></div>
+  <div id="policy-context" class="card-3 p-5 mt-4"></div>
+</section>
+
+<!-- 시민단체 vs 재계 -->
+<section id="sides" class="mb-20">
+  <h2 class="text-3xl font-bold section-title serif mb-2">두 입장 — 시민단체 vs 재계</h2>
+  <p class="text-sm dim mb-6">같은 데이터를 두고 다른 결론. 본 스캔은 두 입장 모두 명시.</p>
+  <div id="sides-grid" class="grid md:grid-cols-2 gap-4"></div>
+  <div class="card-3 p-4 mt-4 text-xs dim leading-relaxed">
+    <span class="accent mono uppercase tracking-wider mr-2">팩트체크 기준</span>
+    어느 입장도 본 스캔 결과를 단독으로 결정하지 않는다. 수치(사업비 비율·의결권 행사 내역·보유 주식·기부금 사용처)는 모두 출처 표기 데이터를 그대로 사용. 평가가 들어간 문장은 모두 누가 한 말인지 명시.
+  </div>
+</section>
+
+<!-- 사업비 비율 -->
+<section id="ratio" class="mb-20">
+  <div class="flex items-end justify-between mb-1 flex-wrap gap-3">
+    <div>
+      <h2 class="text-3xl font-bold section-title serif">사업수행비용 비율</h2>
+      <p class="text-sm dim mt-1" id="ratio-meta">로딩 중...</p>
+    </div>
+    <div class="flex gap-1 mono text-xs">
+      <button id="tab-low" class="tab-active px-3 py-2 rounded">하위 17곳</button>
+      <button id="tab-high" class="tab-inactive px-3 py-2 rounded">상위 10곳</button>
+      <button id="tab-all" class="tab-inactive px-3 py-2 rounded">전수 테이블</button>
+    </div>
+  </div>
+  <div id="view-chart" class="card p-6 mt-4">
+    <div style="height: 480px; position: relative;"><canvas id="chart-ratio"></canvas></div>
+    <div class="mt-4 pt-4 border-t border-line text-xs dim leading-relaxed" id="kcc-note"></div>
+  </div>
+  <div id="view-table" class="card p-6 mt-4" style="display: none;">
+    <div class="flex gap-3 mb-4 flex-wrap items-center">
+      <input id="search-input" type="text" class="table-search" style="max-width: 300px;" placeholder="그룹명 검색 (예: 삼성, KCC, 한화)" />
+      <div class="text-xs dim ml-auto">표시된 27개는 CEO스코어가 명시. 그 외 46개 그룹은 50~99% 구간.</div>
+    </div>
+    <div class="scroll-y">
+      <table class="w-full">
+        <thead class="sticky top-0" style="background: var(--bg-2);">
+          <tr class="border-b" style="border-color: var(--line-2)">
+            <th class="text-left p-3 sortable" data-sort="rank">순위</th>
+            <th class="text-left p-3 sortable" data-sort="group">그룹</th>
+            <th class="text-right p-3 sortable sort-desc" data-sort="ratio">사업비 비율</th>
+            <th class="text-left p-3">구간</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 사업비 증감 -->
+<section id="delta" class="mb-20">
+  <h2 class="text-3xl font-bold section-title serif mb-1">사업수행비용 절대액 증감 — 2023 → 2024</h2>
+  <p class="text-sm dim mb-4">그룹 단위 합산. 단위 억원 (CEO스코어)</p>
+  <div class="grid md:grid-cols-2 gap-4">
+    <div class="card p-6">
+      <div class="flex items-center gap-2 mb-4">
+        <div class="w-2 h-2 rounded-full" style="background: var(--danger)"></div>
+        <h3 class="font-semibold">감소 10곳</h3>
+      </div>
+      <div style="height: 380px; position: relative;"><canvas id="chart-down"></canvas></div>
+    </div>
+    <div class="card p-6">
+      <div class="flex items-center gap-2 mb-4">
+        <div class="w-2 h-2 rounded-full" style="background: var(--success)"></div>
+        <h3 class="font-semibold">증가 10곳</h3>
+      </div>
+      <div style="height: 380px; position: relative;"><canvas id="chart-up"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- 자산·수입·비용 -->
+<section id="structure" class="mb-20">
+  <h2 class="text-3xl font-bold section-title serif mb-1">자산·수입·비용 구성 — 2024 단년</h2>
+  <p class="text-sm dim mb-4">72개 대기업 231개 공익법인 합산 (국세청)</p>
+  <div class="grid md:grid-cols-3 gap-4 mb-4">
+    <div class="card p-6"><h3 class="font-semibold mb-1">자산</h3><p class="text-xs dim mb-4">총 31.9조원</p><div style="height: 220px; position: relative;"><canvas id="chart-asset"></canvas></div></div>
+    <div class="card p-6"><h3 class="font-semibold mb-1">수입</h3><p class="text-xs dim mb-4">총 9.4조원 · 기부금 8%</p><div style="height: 220px; position: relative;"><canvas id="chart-income"></canvas></div></div>
+    <div class="card p-6"><h3 class="font-semibold mb-1">비용 기능별</h3><p class="text-xs dim mb-4">총 9.5조원 · 분배 12%</p><div style="height: 220px; position: relative;"><canvas id="chart-func"></canvas></div></div>
+  </div>
+  <div class="card-3 p-4 text-xs dim leading-relaxed">
+    <span class="accent mono uppercase tracking-wider mr-2">읽기</span>
+    수입의 73%가 「그 외 수익」(임대·운영). 비용은 인력(39%) + 기타 관리(38%) = 77%. 「수혜자에게 직접 가는 돈」(분배비용)은 12%뿐.
+  </div>
+</section>
+
+<!-- 3년 추세 -->
+<section id="trend" class="mb-20">
+  <h2 class="text-3xl font-bold section-title serif mb-1">3년 추세</h2>
+  <p class="text-sm dim mb-4">공시대상기업집단(공정위) + 188곳 동일 모집단(CEO스코어)</p>
+  <div class="grid md:grid-cols-2 gap-4">
+    <div class="card p-6"><h3 class="font-semibold mb-4">공시대상기업집단 / 공익법인 수</h3><div style="height: 260px; position: relative;"><canvas id="chart-trend"></canvas></div></div>
+    <div class="card p-6"><h3 class="font-semibold mb-4">188곳 사업수입·사업수행비용</h3><div style="height: 260px; position: relative;"><canvas id="chart-trend2"></canvas></div></div>
+  </div>
+</section>
+
+<!-- 출처 -->
+<section id="sources" class="mb-16">
+  <h2 class="text-3xl font-bold section-title serif mb-4">출처</h2>
+  <div id="sources-box" class="card p-6 text-sm dim leading-relaxed space-y-3"></div>
+</section>
+
+<footer class="pt-8 border-t leading-relaxed text-xs mute" style="border-color: var(--line-2)">
+  <p class="mb-2">하네스 뉴스룸 · 전체 분석 · <span id="ts"></span></p>
+  <p>공정위·국세청·CEO스코어·프레스나인 종합. 개별 그룹 케이스는 케이스 페이지 참고. 평가 문장은 모두 출처를 명시했다.</p>
+</footer>
+
+</main>
+</div>
+</div>
+
+<script>
+const COLORS = {
+  bg: '#0a0a0a', bg2: '#111111', bg3: '#161616', bg4: '#1c1c1c',
+  text: '#e5e5e5', dim: '#a3a3a3', mute: '#737373', line: '#262626', line2: '#333333',
+  accent: '#fbbf24', accent2: '#fb923c', danger: '#ef4444', success: '#34d399',
+  blue: '#60a5fa', purple: '#a78bfa'
+};
+const TONE_TO_CLASS = { danger: 'danger', success: 'success', accent: 'accent', warn: 'accent-2', mute: 'mute' };
+const PILL_BY_CLASS = { danger: 'pill-danger', warn: 'pill-warn', accent: 'pill-accent', success: 'pill-success', mute: 'pill-mute' };
+
+Chart.defaults.font.family = "'IBM Plex Sans KR', sans-serif";
+Chart.defaults.color = COLORS.dim;
+Chart.defaults.borderColor = COLORS.line;
+const noLegend = { plugins: { legend: { display: false } } };
+const gridStyle = { grid: { color: COLORS.line, drawBorder: false }, ticks: { color: COLORS.dim, font: { size: 11, family: 'JetBrains Mono' } } };
+const gridStyleNoX = { grid: { display: false }, ticks: { color: COLORS.dim, font: { size: 11 } } };
+
+const dataFiles = ['overview', 'patterns', 'ratio', 'delta', 'structure', 'matrix', 'deep-cases', 'policy', 'sources'];
+Promise.all(dataFiles.map(f => fetch(`data/${f}.json`).then(r => { if (!r.ok) throw new Error(f); return r.json(); })))
+  .then(([overview, patterns, ratio, delta, structure, matrix, deepCases, policy, sources]) => {
+    renderTwoFaces(patterns.two_faces);
+    renderPatterns(patterns.patterns);
+    renderLoopholes(patterns.loopholes);
+    renderMatrix(matrix);
+    renderDeep(deepCases);
+    renderPolicy(policy);
+    renderSides(policy);
+    renderRatioSection(ratio);
+    renderDelta(delta);
+    renderStructure(structure);
+    renderTrend(overview);
+    renderSources(sources);
+    document.getElementById('ts').textContent = overview.generated;
+  })
+  .catch(err => { console.error(err); document.getElementById('error-box').style.display = 'block'; });
+
+function renderTwoFaces(d) {
+  document.getElementById('two-faces-title').textContent = d.title;
+  document.getElementById('two-faces-sub').textContent = d.subtitle;
+  document.getElementById('two-faces-official').innerHTML = `
+    <div class="flex items-center gap-2 mb-4">
+      <div class="w-2 h-2 rounded-full" style="background: var(--success)"></div>
+      <h3 class="font-bold text-lg">${d.official.title}</h3>
+    </div>
+    <div class="space-y-1">
+      ${d.official.items.map(it => `
+        <div class="stat-line">
+          <div class="flex-1">
+            <div class="text-sm">${it.label}</div>
+            ${it.note ? `<div class="text-xs mute mt-1">${it.note}</div>` : ''}
+          </div>
+          <div class="mono text-sm font-semibold success" style="text-align: right;">${it.value}</div>
+        </div>`).join('')}
+    </div>`;
+  document.getElementById('two-faces-shadow').innerHTML = `
+    <div class="flex items-center gap-2 mb-4">
+      <div class="w-2 h-2 rounded-full" style="background: var(--danger)"></div>
+      <h3 class="font-bold text-lg">${d.shadow.title}</h3>
+    </div>
+    <div class="space-y-1">
+      ${d.shadow.items.map(it => `
+        <div class="stat-line">
+          <div class="flex-1">
+            <div class="text-sm">${it.label}</div>
+            ${it.note ? `<div class="text-xs mute mt-1">${it.note}</div>` : ''}
+          </div>
+          <div class="mono text-sm font-semibold danger" style="text-align: right;">${it.value}</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function renderPatterns(d) {
+  document.getElementById('patterns-title').textContent = d.title;
+  document.getElementById('patterns-sub').textContent = d.subtitle;
+  document.getElementById('patterns-list').innerHTML = d.rows.map((r, i) => `
+    <details class="card p-6" ${i === 0 ? 'open' : ''}>
+      <summary>
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex items-start gap-3 flex-1">
+            <span class="chev accent mono mt-1">▶</span>
+            <h3 class="text-lg font-bold">${r.pattern}</h3>
+          </div>
+          <span class="pill ${PILL_BY_CLASS[r.tone] || 'pill-mute'} shrink-0">${r.instances.length}건</span>
+        </div>
+      </summary>
+      <div class="mt-5 ml-7 space-y-3">
+        ${r.instances.map(inst => `
+          <div class="card-3 p-4 flex items-start gap-3">
+            <span class="pill pill-mute shrink-0">${inst.group}</span>
+            <div class="flex-1 text-sm dim leading-relaxed">${inst.detail}</div>
+            ${inst.url ? `<a href="${inst.url}" class="mono text-xs accent shrink-0">상세 →</a>` : '<span class="mono text-xs mute shrink-0">미작성</span>'}
+          </div>`).join('')}
+      </div>
+    </details>`).join('');
+  document.getElementById('patterns-footer').innerHTML = `<span class="accent mono uppercase tracking-wider mr-2">읽기</span>${d.footer_note}`;
+}
+
+function renderLoopholes(d) {
+  document.getElementById('loopholes-title').textContent = d.title;
+  document.getElementById('loopholes-sub').textContent = d.subtitle;
+  document.getElementById('loopholes-grid').innerHTML = d.rows.map(r => `
+    <div class="card p-6" style="border-color: var(--danger);">
+      <h3 class="font-bold mb-3">${r.loophole}</h3>
+      <p class="text-sm dim leading-relaxed mb-4">${r.summary}</p>
+      <div class="card-3 p-3">
+        <div class="text-xs mute mono uppercase tracking-wider mb-1">대표 케이스</div>
+        <div class="text-sm">${r.case}</div>
+        ${r.url ? `<a href="${r.url}" class="mono text-xs accent mt-2 inline-block">→ 케이스 페이지</a>` : ''}
+      </div>
+    </div>`).join('');
+  document.getElementById('loopholes-footer').innerHTML = `<span class="danger mono uppercase tracking-wider mr-2">맥락</span>${d.footer_note}`;
+}
+
+function renderMatrix(d) {
+  document.getElementById('matrix-body').innerHTML = d.rows.map(r => `
+    <tr class="border-b border-line">
+      <td class="matrix-cell">${r.그룹}</td>
+      <td class="matrix-cell">${r.재단}</td>
+      <td class="matrix-cell">${r.보유계열사}</td>
+      <td class="matrix-cell text-right mono">${r.지분율}</td>
+      <td class="matrix-cell"><span class="pill ${PILL_BY_CLASS[r.상태_class] || 'pill-mute'}">${r.상태}</span></td>
+      <td class="matrix-cell dim">${r.사유}</td>
+    </tr>`).join('');
+}
+
+function renderDeep(d) {
+  document.getElementById('deep-list').innerHTML = d.cases.map(c => `
+    <details class="card p-6">
+      <summary>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span class="chev accent mono">▶</span>
+            <div>
+              <div class="mono text-xs mute uppercase mb-1">CASE ${c.no} · ${c.group}</div>
+              <h3 class="text-lg font-bold">${c.title}</h3>
+            </div>
+          </div>
+          <span class="pill ${PILL_BY_CLASS[c.tag_class] || 'pill-mute'}">${c.tag}</span>
+        </div>
+      </summary>
+      <div class="mt-6 ml-7 text-sm dim leading-relaxed space-y-4">
+        <div style="position: relative; padding-left: 24px;">
+          <div style="position: absolute; left: 6px; top: 0; bottom: 0; width: 1px; background: var(--line-2);"></div>
+          ${c.timeline.map(t => `<div style="position: relative; padding-bottom: 14px;"><span style="position: absolute; left: -22px; top: 6px; width: 9px; height: 9px; border-radius: 50%; background: ${t.dim ? 'var(--text-mute)' : 'var(--accent)'};"></span><span class="mono ${t.dim ? 'mute' : 'accent'} text-xs mr-3">${t.year}</span>${t.text}</div>`).join('')}
+        </div>
+        <div class="quote text-xs">"${c.summary_quote}" — ${c.summary_source}</div>
+        ${c.extra ? `<p class="text-xs">${c.extra}</p>` : ''}
+      </div>
+    </details>`).join('');
+}
+
+function renderPolicy(d) {
+  document.getElementById('policy-grid').innerHTML = `
+    <div class="card p-6">
+      <h3 class="font-semibold mb-4 flex items-center gap-2"><span class="w-2 h-2 rounded-full" style="background: var(--blue)"></span>${d.tax_limit.title}</h3>
+      <table class="w-full text-sm">
+        <thead><tr class="border-b border-line"><th class="text-left p-2">구분</th><th class="text-right p-2">한도</th></tr></thead>
+        <tbody>${d.tax_limit.rows.map(r => `<tr class="border-b border-line"><td class="p-2 ${r.dim ? 'dim' : ''}">${r.구분}</td><td class="p-2 text-right mono ${r.tone ? TONE_TO_CLASS[r.tone] : ''} ${r.dim ? 'dim' : ''}">${r.한도}</td></tr>`).join('')}</tbody>
+      </table>
+      <p class="text-xs dim mt-4 leading-relaxed">${d.tax_limit.note}</p>
+    </div>
+    <div class="card p-6">
+      <h3 class="font-semibold mb-4 flex items-center gap-2"><span class="w-2 h-2 rounded-full" style="background: var(--accent)"></span>${d.voting_limit.title}</h3>
+      <div class="grid grid-cols-4 gap-2 mb-4">
+        ${d.voting_limit.stages.map(s => {
+          const borderStyle = s.tone === 'accent2' ? 'border-color: var(--accent-2)' : s.tone === 'accent' ? 'border-color: var(--accent)' : s.tone === 'danger' ? 'border-color: var(--danger)' : '';
+          const numClass = s.tone === 'danger' ? 'danger' : '';
+          return `<div class="card-3 p-3 text-center" style="${borderStyle}"><div class="text-xs mute mono mb-1">${s.year}</div><div class="mono text-2xl font-bold ${numClass}">${s.limit}<span class="text-sm dim">%</span></div></div>`;
+        }).join('')}
+      </div>
+      <p class="text-xs dim leading-relaxed">${d.voting_limit.note}</p>
+    </div>`;
+  document.getElementById('policy-context').innerHTML = `
+    <div class="grid md:grid-cols-3 gap-4 text-sm">
+      ${d.context_cards.map(c => `<div><div class="mono text-xs uppercase mute mb-2">${c.title}</div><p class="dim leading-relaxed text-xs">${c.text}</p></div>`).join('')}
+    </div>`;
+}
+
+function renderSides(d) {
+  document.getElementById('sides-grid').innerHTML = `
+    <div class="card p-6">
+      <div class="flex items-center gap-2 mb-3"><div class="w-2 h-2 rounded-full" style="background: var(--blue)"></div><span class="mono text-xs uppercase mute">시민단체 · 학계</span></div>
+      <h3 class="font-semibold mb-3">${d.civic_view.title}</h3>
+      <div class="space-y-3 text-sm dim">${d.civic_view.paragraphs.map(p => `<p class="leading-relaxed">${p}</p>`).join('')}</div>
+    </div>
+    <div class="card p-6">
+      <div class="flex items-center gap-2 mb-3"><div class="w-2 h-2 rounded-full" style="background: var(--accent)"></div><span class="mono text-xs uppercase mute">재계 · 한경연</span></div>
+      <h3 class="font-semibold mb-3">${d.industry_view.title}</h3>
+      <div class="space-y-3 text-sm dim">${d.industry_view.paragraphs.map(p => `<p class="leading-relaxed">${p}</p>`).join('')}</div>
+    </div>`;
+}
+
+function renderRatioSection(d) {
+  document.getElementById('ratio-meta').textContent = `「수입 대비 본래 목적사업에 직접 쓴 비용」 — ${d.universe} (${d.source})`;
+  document.getElementById('kcc-note').innerHTML = `<span class="accent">참고 — </span>KCC 산하 ${d.kcc_detail.재단.join('·')} 2곳 합산: 2024년 사업수입 ${d.kcc_detail['2024_수입_억']}억원, 사업수행비용 ${d.kcc_detail['2024_사업비_억']}억원(1.4%). ${d.kcc_detail.서전문화재단_수입_변화}이지만 사업비는 ${d.kcc_detail.서전문화재단_사업비_변화}.`;
+  let ratioChart;
+  const ctxRatio = document.getElementById('chart-ratio').getContext('2d');
+  function renderRatio(mode) {
+    const data = mode === 'low' ? d.low : d.high;
+    const labels = data.map(x => x.group);
+    const values = data.map(x => x.ratio);
+    const colors = mode === 'low' ? values.map(v => v < 25 ? COLORS.danger : v < 40 ? COLORS.accent2 : COLORS.accent) : values.map(v => v >= 100 ? COLORS.success : COLORS.blue);
+    if (ratioChart) ratioChart.destroy();
+    ratioChart = new Chart(ctxRatio, {
+      type: 'bar',
+      data: { labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 0, borderRadius: 2, barThickness: 18 }] },
+      options: { indexAxis: 'y', maintainAspectRatio: false, ...noLegend,
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: COLORS.bg3, borderColor: COLORS.line, borderWidth: 1, padding: 10, titleColor: COLORS.text, bodyColor: COLORS.dim, callbacks: { label: c => `사업비 비율 ${c.parsed.x}%` } } },
+        scales: { x: { ...gridStyle, beginAtZero: true, ticks: { ...gridStyle.ticks, callback: v => v + '%' } }, y: gridStyleNoX }
+      }
+    });
+  }
+  renderRatio('low');
+  function setActiveTab(activeId) {
+    ['tab-low', 'tab-high', 'tab-all'].forEach(id => {
+      document.getElementById(id).className = (id === activeId ? 'tab-active' : 'tab-inactive') + ' px-3 py-2 rounded mono text-xs';
+    });
+  }
+  document.getElementById('tab-low').onclick = () => { setActiveTab('tab-low'); document.getElementById('view-chart').style.display = 'block'; document.getElementById('view-table').style.display = 'none'; renderRatio('low'); };
+  document.getElementById('tab-high').onclick = () => { setActiveTab('tab-high'); document.getElementById('view-chart').style.display = 'block'; document.getElementById('view-table').style.display = 'none'; renderRatio('high'); };
+  document.getElementById('tab-all').onclick = () => { setActiveTab('tab-all'); document.getElementById('view-chart').style.display = 'none'; document.getElementById('view-table').style.display = 'block'; };
+  const ALL_GROUPS = [
+    ...d.low.map(x => ({ group: x.group, ratio: x.ratio, band: '하위 (50% 미만)' })),
+    ...d.high.map(x => ({ group: x.group, ratio: x.ratio, band: '상위 (99% 이상)' }))
+  ];
+  let sortKey = 'ratio', sortDir = 'desc', searchTerm = '';
+  function renderTable() {
+    let rows = [...ALL_GROUPS];
+    if (searchTerm) rows = rows.filter(r => r.group.toLowerCase().includes(searchTerm.toLowerCase()));
+    rows.sort((a, b) => {
+      let av = a[sortKey], bv = b[sortKey];
+      if (typeof av === 'string') return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+      return sortDir === 'asc' ? av - bv : bv - av;
+    });
+    document.getElementById('table-body').innerHTML = rows.map((r, i) => {
+      const colorClass = r.ratio < 25 ? 'danger' : r.ratio < 50 ? 'accent-2' : r.ratio < 100 ? 'dim' : 'success';
+      const pillClass = r.ratio < 50 ? 'pill-danger' : 'pill-success';
+      return `<tr class="border-b border-line"><td class="p-3 mono mute">${i+1}</td><td class="p-3 font-semibold">${r.group}</td><td class="p-3 text-right mono ${colorClass}">${r.ratio}%</td><td class="p-3"><span class="pill ${pillClass}">${r.band}</span></td></tr>`;
+    }).join('') + `<tr><td colspan="4" class="p-4 text-center text-xs dim">${d.unknown_band} (${d.unknown_count}개 그룹)</td></tr>`;
+  }
+  renderTable();
+  document.getElementById('search-input').addEventListener('input', e => { searchTerm = e.target.value; renderTable(); });
+  document.querySelectorAll('.sortable').forEach(th => {
+    th.addEventListener('click', () => {
+      const key = th.dataset.sort;
+      if (sortKey === key) sortDir = sortDir === 'asc' ? 'desc' : 'asc'; else { sortKey = key; sortDir = 'desc'; }
+      document.querySelectorAll('.sortable').forEach(t => t.classList.remove('sort-asc', 'sort-desc'));
+      th.classList.add('sort-' + sortDir);
+      renderTable();
+    });
+  });
+}
+
+function renderDelta(d) {
+  function barChart(canvasId, data, color, sign) {
+    new Chart(document.getElementById(canvasId).getContext('2d'), {
+      type: 'bar',
+      data: { labels: data.map(x => x.group), datasets: [{ data: data.map(x => Math.abs(x.change)), backgroundColor: color, borderWidth: 0, borderRadius: 2, barThickness: 16 }] },
+      options: { indexAxis: 'y', maintainAspectRatio: false, ...noLegend,
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: COLORS.bg3, borderColor: COLORS.line, borderWidth: 1, padding: 10, titleColor: COLORS.text, bodyColor: COLORS.dim, callbacks: { label: c => `${sign}${c.parsed.x.toLocaleString()}억원` } } },
+        scales: { x: { ...gridStyle, beginAtZero: true, ticks: { ...gridStyle.ticks, callback: v => sign + v.toLocaleString() } }, y: gridStyleNoX }
+      }
+    });
+  }
+  barChart('chart-down', d.down, COLORS.danger, '−');
+  barChart('chart-up', d.up, COLORS.success, '+');
+}
+
+function renderStructure(d) {
+  function donut(canvasId, data, colors) {
+    new Chart(document.getElementById(canvasId).getContext('2d'), {
+      type: 'doughnut',
+      data: { labels: data.map(x => x.label), datasets: [{ data: data.map(x => x.value), backgroundColor: colors, borderColor: COLORS.bg2, borderWidth: 2 }] },
+      options: { maintainAspectRatio: false, cutout: '60%',
+        plugins: {
+          legend: { position: 'right', labels: { color: COLORS.dim, font: { size: 11 }, padding: 8, boxWidth: 10, boxHeight: 10,
+            generateLabels: chart => chart.data.labels.map((label, i) => ({ text: `${label} ${chart.data.datasets[0].data[i]}%`, fillStyle: chart.data.datasets[0].backgroundColor[i], strokeStyle: chart.data.datasets[0].backgroundColor[i], lineWidth: 0, index: i }))
+          } },
+          tooltip: { backgroundColor: COLORS.bg3, borderColor: COLORS.line, borderWidth: 1, padding: 10, titleColor: COLORS.text, bodyColor: COLORS.dim, callbacks: { label: c => `${c.label} ${c.parsed}%` } }
+        }
+      }
+    });
+  }
+  donut('chart-asset', d.asset.구성, [COLORS.blue, COLORS.accent, COLORS.purple, COLORS.mute]);
+  donut('chart-income', d.income.구성, [COLORS.mute, COLORS.blue, COLORS.success, COLORS.danger]);
+  donut('chart-func', d.expense_function.구성, [COLORS.purple, COLORS.mute, COLORS.success, COLORS.blue]);
+}
+
+function renderTrend(d) {
+  new Chart(document.getElementById('chart-trend').getContext('2d'), {
+    type: 'bar',
+    data: { labels: d.trend_groups.labels, datasets: [
+      { label: '공시대상기업집단', data: d.trend_groups['공시대상기업집단'], backgroundColor: COLORS.blue, borderRadius: 2, barThickness: 28 },
+      { label: '소속 공익법인', data: d.trend_groups['소속 공익법인'], backgroundColor: COLORS.accent, borderRadius: 2, barThickness: 28 }
+    ] },
+    options: { maintainAspectRatio: false,
+      plugins: { legend: { position: 'top', labels: { color: COLORS.dim, font: { size: 11 }, boxWidth: 10, boxHeight: 10 } }, tooltip: { backgroundColor: COLORS.bg3, borderColor: COLORS.line, borderWidth: 1, padding: 10 } },
+      scales: { x: gridStyleNoX, y: gridStyle }
+    }
+  });
+  new Chart(document.getElementById('chart-trend2').getContext('2d'), {
+    type: 'bar',
+    data: { labels: d.trend_188.labels, datasets: [
+      { label: '사업수입 (조원)', data: d.trend_188['사업수입 (조원)'], backgroundColor: COLORS.blue, borderRadius: 2, barThickness: 48 },
+      { label: '사업수행비용 (조원)', data: d.trend_188['사업수행비용 (조원)'], backgroundColor: COLORS.accent, borderRadius: 2, barThickness: 48 }
+    ] },
+    options: { maintainAspectRatio: false,
+      plugins: { legend: { position: 'top', labels: { color: COLORS.dim, font: { size: 11 }, boxWidth: 10, boxHeight: 10 } }, tooltip: { backgroundColor: COLORS.bg3, borderColor: COLORS.line, borderWidth: 1, padding: 10, callbacks: { label: c => `${c.dataset.label}: ${c.parsed.y}조원` } } },
+      scales: { x: gridStyleNoX, y: { ...gridStyle, ticks: { ...gridStyle.ticks, callback: v => v + '조' } } }
+    }
+  });
+}
+
+function renderSources(d) {
+  document.getElementById('sources-box').innerHTML = d.groups.map(g => `
+    <div><span class="accent mono text-xs uppercase tracking-wider mr-2">${g.label}</span>${g.items.map(it => `<a href="${it.url}" target="_blank">${it.title}</a>`).join(' · ')}</div>
+  `).join('');
+}
+
+const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
+const sections = document.querySelectorAll('section[id]');
+function highlight() {
+  let current = '';
+  sections.forEach(s => { if (s.getBoundingClientRect().top <= 120) current = s.id; });
+  navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + current));
+}
+window.addEventListener('scroll', highlight);
+highlight();
+navLinks.forEach(link => link.addEventListener('click', e => {
+  e.preventDefault();
+  const target = document.querySelector(link.getAttribute('href'));
+  if (target) target.scrollIntoView({ behavior: 'smooth' });
+}));
+</script>
+
+</body>
+</html>

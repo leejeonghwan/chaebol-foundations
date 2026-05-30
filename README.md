@@ -8,7 +8,8 @@
 
 ```
 chaebol-foundations/
-├── index.html              # 본문 (data/ 폴더 JSON을 fetch로 로드)
+├── index.html              # 메인 — Hero + 11개 그룹 카드 + Case Deep Dive 목록 + 출처
+├── analysis.html           # 전체 분석 — 두 얼굴·5가지 패턴·4가지 사각지대·통계·제도 종합
 ├── case-hyundai.html       # Case Deep Dive 01 — 현대차 정몽구재단 (5개 의혹 카테고리)
 ├── data/                   # 데이터 — 갱신할 때 여기만 만지면 됨
 │   ├── overview.json       # KPI · 3년 추세

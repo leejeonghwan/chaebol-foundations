@@ -3,13 +3,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>대기업집단 공익법인 결산 스캔 — 데이터 대시보드</title>
-<meta name="description" content="공정거래위원회 지정 92개 공시대상기업집단 소속 232개 공익법인의 결산·의결권·내부거래·세제를 한 페이지에서.">
+<title>대기업집단 공익법인 결산 스캔 — 232개 공익법인의 두 얼굴</title>
+<meta name="description" content="공정거래위원회 지정 92개 공시대상기업집단 소속 232개 공익법인. 11개 그룹 카드 + 8개 케이스 딥다이브 + 종합 분석.">
 <meta property="og:title" content="대기업집단 공익법인 결산 스캔">
-<meta property="og:description" content="9개 그룹 의결권 케이스 매트릭스 · 73개 그룹 사업비 비율 · 제도와 시민단체·재계 입장">
+<meta property="og:description" content="232개 공익법인의 두 얼굴 — 공식 사업과 우회 지배. 8개 케이스에서 발견한 5가지 패턴, 4가지 제도 사각지대">
 <meta property="og:type" content="website">
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Serif+KR:wght@500;700&display=swap" rel="stylesheet">
@@ -28,125 +27,62 @@
   .serif { font-family: 'Noto Serif KR', serif; }
   .card { background: var(--bg-2); border: 1px solid var(--line); }
   .card-3 { background: var(--bg-3); border: 1px solid var(--line); }
-  .card-4 { background: var(--bg-4); border: 1px solid var(--line); }
-  .accent { color: var(--accent); } .accent-2 { color: var(--accent-2); }
-  .danger { color: var(--danger); } .success { color: var(--success); } .blue { color: var(--blue); }
+  .accent { color: var(--accent); }
+  .danger { color: var(--danger); }
+  .success { color: var(--success); }
   .dim { color: var(--text-dim); } .mute { color: var(--text-mute); }
-  .border-line { border-color: var(--line); }
-  .tab-active { background: var(--accent); color: #0a0a0a; }
-  .tab-inactive { background: var(--bg-3); color: var(--text-dim); }
-  .tab-inactive:hover { background: var(--bg-4); color: var(--text); }
-  .section-title { letter-spacing: -0.02em; }
-  table { border-collapse: collapse; width: 100%; }
-  td, th { border-color: var(--line); }
-  th { color: var(--text-dim); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
-  td { font-size: 13px; }
-  tbody tr:hover { background: var(--bg-3); }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
-  details > summary { list-style: none; cursor: pointer; }
-  details > summary::-webkit-details-marker { display: none; }
-  details[open] .chev { transform: rotate(90deg); }
-  .chev { transition: transform 0.2s; display: inline-block; }
+  .section-title { letter-spacing: -0.02em; }
   .pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-family: 'JetBrains Mono'; }
   .pill-danger { background: rgba(239,68,68,0.12); color: var(--danger-soft); border: 1px solid rgba(239,68,68,0.3); }
   .pill-warn { background: rgba(251,146,60,0.12); color: var(--accent-2); border: 1px solid rgba(251,146,60,0.3); }
   .pill-accent { background: rgba(251,191,36,0.12); color: var(--accent-soft); border: 1px solid rgba(251,191,36,0.3); }
   .pill-success { background: rgba(52,211,153,0.12); color: var(--success); border: 1px solid rgba(52,211,153,0.3); }
   .pill-mute { background: var(--bg-3); color: var(--text-dim); border: 1px solid var(--line); }
-  .sidebar { position: sticky; top: 32px; }
-  .nav-link { display: block; padding: 6px 10px; border-left: 2px solid transparent; color: var(--text-mute); font-size: 12px; transition: all 0.15s; cursor: pointer; }
-  .nav-link:hover { color: var(--text); border-left-color: var(--line-2); text-decoration: none; }
-  .nav-link.active { color: var(--accent); border-left-color: var(--accent); }
-  .stat-line { border-bottom: 1px dashed var(--line); padding: 8px 0; display: flex; justify-content: space-between; align-items: baseline; }
+  .stat-line { border-bottom: 1px dashed var(--line); padding: 8px 0; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
   .stat-line:last-child { border-bottom: 0; }
-  .quote { border-left: 3px solid var(--accent); padding-left: 16px; font-style: italic; color: var(--text-dim); }
   .case-card { transition: all 0.2s; }
   .case-card:hover { border-color: var(--line-2); }
   .case-card-link { cursor: pointer; }
   .case-card-link:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(251,191,36,0.08); }
   .case-card-link:hover h3 { color: var(--accent); }
-  .matrix-cell { padding: 6px 8px; font-size: 11px; }
-  .table-search { background: var(--bg-3); border: 1px solid var(--line); padding: 8px 12px; color: var(--text); width: 100%; border-radius: 4px; font-size: 13px; }
-  .table-search:focus { outline: none; border-color: var(--accent); }
-  .sortable { cursor: pointer; user-select: none; }
-  .sortable:hover { color: var(--text); }
-  .sortable::after { content: ' ⇅'; opacity: 0.4; }
-  .sortable.sort-asc::after { content: ' ↑'; opacity: 1; color: var(--accent); }
-  .sortable.sort-desc::after { content: ' ↓'; opacity: 1; color: var(--accent); }
-  .scroll-y { max-height: 480px; overflow-y: auto; }
-  .scroll-y::-webkit-scrollbar { width: 6px; }
-  .scroll-y::-webkit-scrollbar-track { background: var(--bg-2); }
-  .scroll-y::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 3px; }
-  .timeline-line { position: relative; padding-left: 24px; }
-  .timeline-line::before { content: ''; position: absolute; left: 6px; top: 0; bottom: 0; width: 1px; background: var(--line-2); }
-  .timeline-item { position: relative; padding-bottom: 14px; font-size: 13px; line-height: 1.7; }
-  .timeline-item::before { content: ''; position: absolute; left: -22px; top: 8px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
-  .timeline-item.dim::before { background: var(--text-mute); }
+  .big-cta { transition: all 0.25s; }
+  .big-cta:hover { border-color: var(--accent); background: var(--bg-3); transform: translateY(-2px); }
+  .big-cta:hover .arrow { transform: translateX(6px); }
+  .arrow { display: inline-block; transition: transform 0.2s; }
+  .deep-dive-card { transition: all 0.15s; }
+  .deep-dive-card:hover { border-color: var(--accent); background: var(--bg-3); }
   .loading { color: var(--text-mute); text-align: center; padding: 40px; font-family: 'JetBrains Mono'; font-size: 12px; }
   #error-box { display: none; background: rgba(239,68,68,0.1); border: 1px solid var(--danger); padding: 20px; border-radius: 6px; margin: 40px 0; color: var(--danger-soft); }
 </style>
 </head>
 <body class="min-h-screen">
 
-<div class="max-w-[1400px] mx-auto px-6 py-10">
+<div class="max-w-7xl mx-auto px-6 py-10">
 
+<!-- HEADER -->
 <header class="mb-12 pb-8 border-b" style="border-color: var(--line-2)">
   <div class="flex items-center gap-3 mb-3">
     <div class="w-2 h-2 rounded-full" style="background: var(--accent)"></div>
-    <span class="mono text-xs uppercase tracking-widest dim">harness newsroom · v2</span>
+    <span class="mono text-xs uppercase tracking-widest dim">harness newsroom</span>
     <span class="mono text-xs mute" id="meta-period">— 데이터 로딩 중</span>
   </div>
   <h1 class="text-4xl md:text-5xl font-bold leading-tight section-title mb-3 serif">
     대기업집단 공익법인 결산 스캔
   </h1>
   <p class="text-xl dim leading-relaxed mb-4">
-    232개 공익법인의 「두 얼굴」 — 공식 사업과 우회 지배. 6개 케이스에서 발견한 5가지 패턴, 4가지 제도 사각지대
+    232개 공익법인의 「두 얼굴」 — 공식 사업과 우회 지배. 11개 그룹 카드 + 8개 케이스 딥다이브 + 종합 분석
   </p>
-  <div class="flex flex-wrap gap-x-6 gap-y-2 mono text-xs mute" id="meta-line">
-    <span>로딩 중...</span>
-  </div>
 </header>
 
 <div id="error-box">
   <strong>데이터 로딩 실패</strong>
-  <p class="mt-2 text-sm">
-    이 파일을 <code>file://</code> 프로토콜로 직접 열면 fetch가 막힙니다.
-    로컬에서 보려면 <code class="mono">python3 -m http.server</code> 또는 <code class="mono">npx serve</code>로 띄워주세요.
-    GitHub Pages·EC2 배포 시에는 정상 작동합니다.
-  </p>
+  <p class="mt-2 text-sm">file:// 프로토콜이면 fetch가 막힙니다. <code>python3 -m http.server</code>로 띄워주세요.</p>
 </div>
 
-
-<div class="grid grid-cols-1 lg:grid-cols-[180px_1fr] gap-10">
-
-<aside class="hidden lg:block">
-  <div class="sidebar">
-    <div class="mono text-xs uppercase tracking-widest dim mb-4 pl-3">목차</div>
-    <nav class="space-y-0">
-      <a class="nav-link" href="#hero">한 컷 진단</a>
-      <a class="nav-link" href="#two-faces">두 얼굴</a>
-      <a class="nav-link" href="#patterns">6개 케이스 5가지 패턴</a>
-      <a class="nav-link" href="#loopholes">제도 사각지대</a>
-      <a class="nav-link" href="#cases">11개 그룹 매트릭스</a>
-      <a class="nav-link" href="#ratio">사업비 비율</a>
-      <a class="nav-link" href="#matrix">의결권 무력화 매트릭스</a>
-      <a class="nav-link" href="#deep">5개 개별 케이스 심층</a>
-      <a class="nav-link" href="#policy">제도 · 세제</a>
-      <a class="nav-link" href="#sides">시민단체 vs 재계</a>
-      <a class="nav-link" href="#delta">사업비 증감</a>
-      <a class="nav-link" href="#structure">자산·수입·비용</a>
-      <a class="nav-link" href="#trend">3년 추세</a>
-      <a class="nav-link" href="#zero">2년 연속 0원</a>
-      <a class="nav-link" href="#sources">출처</a>
-    </nav>
-  </div>
-</aside>
-
-<main class="min-w-0">
-
 <!-- HERO — 한 컷 진단 -->
-<section id="hero" class="mb-20">
+<section id="hero" class="mb-16">
   <div class="card p-8 md:p-10" style="background: linear-gradient(135deg, var(--bg-2) 0%, var(--bg-3) 100%); border-color: var(--accent);">
     <div class="mono text-xs uppercase tracking-widest accent mb-3">한 컷 진단</div>
     <h2 id="hero-headline" class="text-3xl md:text-4xl font-bold serif section-title mb-3"><span class="loading">loading...</span></h2>
@@ -155,265 +91,117 @@
   </div>
 </section>
 
-<!-- TWO FACES — 공익법인의 두 얼굴 -->
-<section id="two-faces" class="mb-20">
-  <h2 class="text-3xl font-bold section-title serif mb-2" id="two-faces-title">공익법인의 두 얼굴</h2>
-  <p class="text-sm dim mb-6 leading-relaxed" id="two-faces-sub"></p>
-  <div class="grid md:grid-cols-2 gap-4">
-    <div class="card p-6" id="two-faces-official">
-      <div class="loading">loading...</div>
-    </div>
-    <div class="card p-6" id="two-faces-shadow" style="border-color: var(--danger);">
-      <div class="loading">loading...</div>
-    </div>
-  </div>
-</section>
-
-<!-- PATTERNS — 6개 케이스 5가지 패턴 -->
-<section id="patterns" class="mb-20">
-  <h2 class="text-3xl font-bold section-title serif mb-2" id="patterns-title">6개 케이스에서 발견한 5가지 우회 패턴</h2>
-  <p class="text-sm dim mb-6 leading-relaxed" id="patterns-sub"></p>
-  <div id="patterns-list" class="space-y-3"><div class="loading">loading...</div></div>
-  <div id="patterns-footer" class="card-3 p-4 mt-4 text-xs dim leading-relaxed"></div>
-</section>
-
-<!-- LOOPHOLES — 제도가 못 잡는 4가지 사각지대 -->
-<section id="loopholes" class="mb-20">
-  <h2 class="text-3xl font-bold section-title serif mb-2" id="loopholes-title">제도가 못 잡는 4가지 사각지대</h2>
-  <p class="text-sm dim mb-6 leading-relaxed" id="loopholes-sub"></p>
-  <div id="loopholes-grid" class="grid md:grid-cols-2 gap-4"></div>
-  <div id="loopholes-footer" class="card-3 p-4 mt-4 text-xs dim leading-relaxed"></div>
-</section>
-
-<section id="cases" class="mb-20">
+<!-- 11개 그룹 케이스 매트릭스 -->
+<section id="cases" class="mb-16">
   <h2 class="text-3xl font-bold section-title serif mb-2">11개 그룹 케이스 매트릭스</h2>
   <p class="text-sm dim mb-6 leading-relaxed">
-    공익법인 결산 + 의결권 행사 + 보유 계열사 주식을 함께 본 그룹 단위 카드. 각 카드는 「재단 이름 / 핵심 결산 / 보유 계열사 의결권 상태 / 관전 포인트」.
-    <span class="accent">상세 케이스 페이지가 있는 카드는 클릭하면 5개 의혹 카테고리(승계·탈세·일감몰아주기·사익편취 우회·자금 사용)로 풀어낸 딥다이브로 이동합니다.</span>
+    공익법인 결산 + 의결권 행사 + 보유 계열사 주식을 함께 본 그룹 단위 카드.
+    <span class="accent">상세 케이스 페이지가 있는 카드(8개)는 클릭하면 5개 의혹 카테고리(승계·탈세·일감몰아주기·사익편취 우회·자금 사용)로 풀어낸 딥다이브로 이동합니다.</span>
   </p>
   <div id="cases-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"><div class="loading">loading...</div></div>
   <div id="cases-extra" class="card-3 p-4 mt-4 text-xs dim leading-relaxed"></div>
 </section>
 
-<section id="ratio" class="mb-20">
-  <div class="flex items-end justify-between mb-1 flex-wrap gap-3">
-    <div>
-      <h2 class="text-3xl font-bold section-title serif">사업수행비용 비율</h2>
-      <p class="text-sm dim mt-1" id="ratio-meta">로딩 중...</p>
+<!-- 전체 분석으로 가는 CTA -->
+<section class="mb-16">
+  <a href="analysis.html" class="big-cta card p-8 md:p-10 block">
+    <div class="flex items-center justify-between gap-6">
+      <div class="flex-1">
+        <div class="mono text-xs uppercase tracking-widest accent mb-2">전체 분석</div>
+        <h2 class="text-2xl md:text-3xl font-bold serif mb-3 section-title">두 얼굴·5가지 패턴·4가지 사각지대·통계·제도까지</h2>
+        <p class="text-sm dim leading-relaxed">
+          공식 사업(분배 1.2조·기부 0.7조)과 우회 지배 도구(보유 주식 9.5조·100% 특수관계)를 양면 비교.
+          8개 케이스에서 발견한 공통 패턴, 제도가 못 잡는 4가지 우회 경로, 의결권 무력화 매트릭스 23행, 사업비 비율 73개 그룹 전수표, 시민단체 vs 재계 입장까지 한 페이지에서.
+        </p>
+      </div>
+      <div class="mono accent text-3xl arrow shrink-0">→</div>
     </div>
-    <div class="flex gap-1 mono text-xs">
-      <button id="tab-low" class="tab-active px-3 py-2 rounded">하위 17곳</button>
-      <button id="tab-high" class="tab-inactive px-3 py-2 rounded">상위 10곳</button>
-      <button id="tab-all" class="tab-inactive px-3 py-2 rounded">전수 테이블</button>
-    </div>
-  </div>
-
-  <div id="view-chart" class="card p-6 mt-4">
-    <div style="height: 480px; position: relative;"><canvas id="chart-ratio"></canvas></div>
-    <div class="mt-4 pt-4 border-t border-line text-xs dim leading-relaxed" id="kcc-note"></div>
-  </div>
-
-  <div id="view-table" class="card p-6 mt-4" style="display: none;">
-    <div class="flex gap-3 mb-4 flex-wrap items-center">
-      <input id="search-input" type="text" class="table-search" style="max-width: 300px;" placeholder="그룹명 검색 (예: 삼성, KCC, 한화)" />
-      <div class="text-xs dim ml-auto">표시된 27개는 CEO스코어가 명시. 그 외 46개 그룹은 50~99% 구간.</div>
-    </div>
-    <div class="scroll-y">
-      <table class="w-full">
-        <thead class="sticky top-0" style="background: var(--bg-2);">
-          <tr class="border-b" style="border-color: var(--line-2)">
-            <th class="text-left p-3 sortable" data-sort="rank">순위</th>
-            <th class="text-left p-3 sortable" data-sort="group">그룹</th>
-            <th class="text-right p-3 sortable sort-desc" data-sort="ratio">사업비 비율</th>
-            <th class="text-left p-3">구간</th>
-          </tr>
-        </thead>
-        <tbody id="table-body"></tbody>
-      </table>
-    </div>
-  </div>
+  </a>
 </section>
 
-<section id="matrix" class="mb-20">
-  <h2 class="text-3xl font-bold section-title serif mb-2">의결권 무력화 매트릭스</h2>
+<!-- Case Deep Dives 8개 -->
+<section id="deep-dives" class="mb-16">
+  <h2 class="text-2xl font-bold section-title serif mb-2">Case Deep Dives</h2>
   <p class="text-sm dim mb-6 leading-relaxed">
-    상호출자제한기업집단 소속 공익법인이 보유 중인 계열사 주식 중 의결권이 제한·불가능한 항목. 출처: 프레스나인 「공익법인 의결권」 시리즈(2023.5) — 국세청 공익법인 현황공시 기반.
+    개별 그룹 의혹 구조를 5개 카테고리(승계·탈세·일감몰아주기·사익편취 우회·자금 사용)로 풀어낸 케이스 페이지.
   </p>
-  <div class="card overflow-hidden">
-    <div class="overflow-x-auto">
-      <table>
-        <thead style="background: var(--bg-3);">
-          <tr class="border-b" style="border-color: var(--line-2)">
-            <th class="text-left matrix-cell">그룹</th>
-            <th class="text-left matrix-cell">재단</th>
-            <th class="text-left matrix-cell">보유 계열사</th>
-            <th class="text-right matrix-cell">지분율</th>
-            <th class="text-left matrix-cell">의결권 상태</th>
-            <th class="text-left matrix-cell">사유</th>
-          </tr>
-        </thead>
-        <tbody id="matrix-body"></tbody>
-      </table>
-    </div>
+  <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-3">
+    <a href="case-hyundai.html" class="deep-dive-card card p-4 block">
+      <div class="mono text-xs accent mb-2">CASE 01</div>
+      <div class="font-semibold mb-1">현대차 정몽구재단</div>
+      <div class="text-xs dim leading-relaxed">「1조원 사회환원」 18년 + 2022.1 SPC 거래로 정의선 지분 20% 정렬</div>
+    </a>
+    <a href="case-sm.html" class="deep-dive-card card p-4 block">
+      <div class="mono text-xs accent mb-2">CASE 02</div>
+      <div class="font-semibold mb-1">SM 필의료재단</div>
+      <div class="text-xs dim leading-relaxed">「5%룰 우회」 교과서 — 김혜란 별세 6개월 안 4단계 동시 진행</div>
+    </a>
+    <a href="case-dl.html" class="deep-dive-card card p-4 block">
+      <div class="mono text-xs accent mb-2">CASE 03</div>
+      <div class="font-semibold mb-1">DL 통일과나눔</div>
+      <div class="text-xs dim leading-relaxed">2,868억 출연 → KCGI 1,200억 매각 (장부가 1/4). 우회 매각의 가장 노골적 사례</div>
+    </a>
+    <a href="case-samsung.html" class="deep-dive-card card p-4 block">
+      <div class="mono text-xs accent mb-2">CASE 04</div>
+      <div class="font-semibold mb-1">삼성 4개 재단</div>
+      <div class="text-xs dim leading-relaxed">의결권 단계 축소(2023~2026) + 삼성생명법 + 웰스토리 — 진행형 「제도 자체」</div>
+    </a>
+    <a href="case-cj.html" class="deep-dive-card card p-4 block">
+      <div class="mono text-xs accent mb-2">CASE 05</div>
+      <div class="font-semibold mb-1">CJ 3단 우회 승계</div>
+      <div class="text-xs dim leading-relaxed">씨앤아이→타임와이즈→올리브영. 「재단 아닌 개인회사」가 승계 도구</div>
+    </a>
+    <a href="case-db.html" class="deep-dive-card card p-4 block">
+      <div class="mono text-xs accent mb-2">CASE 06</div>
+      <div class="font-semibold mb-1">DB 두 재단</div>
+      <div class="text-xs dim leading-relaxed">공식 재단 89억 매각 + 동곡사회복지재단 15년 사익 전용. 「공식+그림자」 결합</div>
+    </a>
+    <a href="case-lg.html" class="deep-dive-card card p-4 block">
+      <div class="mono text-xs accent mb-2">CASE 07</div>
+      <div class="font-semibold mb-1">LG 상속분쟁</div>
+      <div class="text-xs dim leading-relaxed">2026.2 1심 구광모 승소 → 항소심 진행. 재단 4% 의결권 캐스팅보트 시나리오</div>
+    </a>
+    <a href="case-sk.html" class="deep-dive-card card p-4 block">
+      <div class="mono text-xs accent mb-2">CASE 08</div>
+      <div class="font-semibold mb-1">SK 25개 재단의 모순</div>
+      <div class="text-xs dim leading-relaxed">최다 25개 + ESG 1위 vs 행복전통마을 0원·최기원 「유관」·이혼 파기환송</div>
+    </a>
   </div>
 </section>
 
-<section id="deep" class="mb-20">
-  <h2 class="text-3xl font-bold section-title serif mb-2">5개 개별 케이스 심층</h2>
-  <p class="text-sm dim mb-6">보유 계열사·시점·금액·인물을 단일 사례 단위로 묶어 정리.</p>
-  <div id="deep-list" class="space-y-3"><div class="loading">loading...</div></div>
-</section>
-
-<section id="policy" class="mb-20">
-  <h2 class="text-3xl font-bold section-title serif mb-2">제도 · 세제 맥락</h2>
-  <p class="text-sm dim mb-6">왜 「공익법인」이 그룹 지배구조 도구가 됐는지를 푸는 두 개의 키 — 출연 시 상속·증여세 면제 한도 + 보유 주식 의결권 제한.</p>
-  <div id="policy-grid" class="grid md:grid-cols-2 gap-4"></div>
-  <div id="policy-context" class="card-3 p-5 mt-4"></div>
-</section>
-
-<section id="sides" class="mb-20">
-  <h2 class="text-3xl font-bold section-title serif mb-2">두 입장 — 시민단체 vs 재계</h2>
-  <p class="text-sm dim mb-6">같은 데이터를 두고 다른 결론. 본 스캔은 두 입장 모두 명시.</p>
-  <div id="sides-grid" class="grid md:grid-cols-2 gap-4"></div>
-  <div class="card-3 p-4 mt-4 text-xs dim leading-relaxed">
-    <span class="accent mono uppercase tracking-wider mr-2">팩트체크 기준</span>
-    어느 입장도 본 스캔 결과를 단독으로 결정하지 않는다. 수치(사업비 비율·의결권 행사 내역·보유 주식·기부금 사용처)는 모두 출처 표기 데이터를 그대로 사용. 평가가 들어간 문장은 모두 누가 한 말인지 명시.
+<!-- 출처 (간단) -->
+<section id="sources" class="mb-16 pt-8 border-t" style="border-color: var(--line)">
+  <h2 class="text-2xl font-bold section-title serif mb-4">출처</h2>
+  <div class="text-sm dim leading-relaxed">
+    <p class="mb-2">1차 자료 — <a href="https://www.kfcf.or.kr/news/news/read.do?no=3236" target="_blank">공정거래위원회 2025년 주식소유현황</a> · <a href="https://www.taxtimes.co.kr/news/article.html?no=275234" target="_blank">국세청 2026 공익법인 연차보고서</a> · <a href="https://www.newsspace.kr/news/article.html?no=9608" target="_blank">CEO스코어 73개 그룹 188개 공익법인 사업수행비용</a></p>
+    <p class="mb-2">2차 자료 — 프레스나인 「공익법인 의결권」 시리즈 · 딜사이트 「DB그룹 동곡재단」 시리즈 · 비즈한국 단독 (최기원 「유관」) · 거버넌스워치 (SM·우기원) · 헤럴드/뉴스1/시사저널 (LG 상속분쟁) 등</p>
+    <p class="text-xs mute">전체 출처 목록: <a href="analysis.html#sources">전체 분석 페이지</a> / 각 케이스 페이지</p>
   </div>
-</section>
-
-<section id="delta" class="mb-20">
-  <h2 class="text-3xl font-bold section-title serif mb-1">사업수행비용 절대액 증감 — 2023 → 2024</h2>
-  <p class="text-sm dim mb-4">그룹 단위 합산. 단위 억원 (CEO스코어)</p>
-  <div class="grid md:grid-cols-2 gap-4">
-    <div class="card p-6">
-      <div class="flex items-center gap-2 mb-4">
-        <div class="w-2 h-2 rounded-full" style="background: var(--danger)"></div>
-        <h3 class="font-semibold">감소 10곳</h3>
-      </div>
-      <div style="height: 380px; position: relative;"><canvas id="chart-down"></canvas></div>
-    </div>
-    <div class="card p-6">
-      <div class="flex items-center gap-2 mb-4">
-        <div class="w-2 h-2 rounded-full" style="background: var(--success)"></div>
-        <h3 class="font-semibold">증가 10곳</h3>
-      </div>
-      <div style="height: 380px; position: relative;"><canvas id="chart-up"></canvas></div>
-    </div>
-  </div>
-</section>
-
-<section id="structure" class="mb-20">
-  <h2 class="text-3xl font-bold section-title serif mb-1">자산·수입·비용 구성 — 2024 단년</h2>
-  <p class="text-sm dim mb-4">72개 대기업 231개 공익법인 합산 (국세청)</p>
-  <div class="grid md:grid-cols-3 gap-4 mb-4">
-    <div class="card p-6"><h3 class="font-semibold mb-1">자산</h3><p class="text-xs dim mb-4">총 31.9조원</p><div style="height: 220px; position: relative;"><canvas id="chart-asset"></canvas></div></div>
-    <div class="card p-6"><h3 class="font-semibold mb-1">수입</h3><p class="text-xs dim mb-4">총 9.4조원 · 기부금 8%</p><div style="height: 220px; position: relative;"><canvas id="chart-income"></canvas></div></div>
-    <div class="card p-6"><h3 class="font-semibold mb-1">비용 기능별</h3><p class="text-xs dim mb-4">총 9.5조원 · 분배 12%</p><div style="height: 220px; position: relative;"><canvas id="chart-func"></canvas></div></div>
-  </div>
-  <div class="card-3 p-4 text-xs dim leading-relaxed">
-    <span class="accent mono uppercase tracking-wider mr-2">읽기</span>
-    수입의 73%가 「그 외 수익」(임대·운영). 비용은 인력(39%) + 기타 관리(38%) = 77%. 「수혜자에게 직접 가는 돈」(분배비용)은 12%뿐.
-  </div>
-</section>
-
-<section id="trend" class="mb-20">
-  <h2 class="text-3xl font-bold section-title serif mb-1">3년 추세</h2>
-  <p class="text-sm dim mb-4">공시대상기업집단(공정위) + 188곳 동일 모집단(CEO스코어)</p>
-  <div class="grid md:grid-cols-2 gap-4">
-    <div class="card p-6"><h3 class="font-semibold mb-4">공시대상기업집단 / 공익법인 수</h3><div style="height: 260px; position: relative;"><canvas id="chart-trend"></canvas></div></div>
-    <div class="card p-6"><h3 class="font-semibold mb-4">188곳 사업수입·사업수행비용</h3><div style="height: 260px; position: relative;"><canvas id="chart-trend2"></canvas></div></div>
-  </div>
-</section>
-
-<section id="zero" class="mb-20">
-  <h2 class="text-3xl font-bold section-title serif mb-1">2년 연속 사업수행비용 0원 사례</h2>
-  <p class="text-sm dim mb-6">2023~2024 두 해 연속 사업비 한 푼도 안 쓴 재단 (CEO스코어)</p>
-  <div id="zero-grid" class="grid md:grid-cols-2 gap-4"></div>
-</section>
-
-<section id="sources" class="mb-16">
-  <h2 class="text-3xl font-bold section-title serif mb-4">출처</h2>
-  <div id="sources-box" class="card p-6 text-sm dim leading-relaxed space-y-3"></div>
 </section>
 
 <footer class="pt-8 border-t leading-relaxed text-xs mute" style="border-color: var(--line-2)">
-  <p class="mb-2">하네스 뉴스룸 · v2 데이터 대시보드 · <a href="https://github.com/" target="_blank">GitHub repo</a> · <span id="ts"></span></p>
-  <p>공정위·국세청·CEO스코어·프레스나인 종합. 개별 재단 결산서 직접 확인은 후속 작업. 평가·해석 문장은 모두 출처를 명시했다.</p>
+  <p class="mb-2">하네스 뉴스룸 · 메인 대시보드 · <span id="ts"></span></p>
+  <p>공정위·국세청·CEO스코어·프레스나인 종합. 평가 문장은 모두 출처를 명시했다.</p>
 </footer>
 
-</main>
-</div>
 </div>
 
 <script>
-// ============================================================
-// CONFIG
-// ============================================================
-const COLORS = {
-  bg: '#0a0a0a', bg2: '#111111', bg3: '#161616', bg4: '#1c1c1c',
-  text: '#e5e5e5', dim: '#a3a3a3', mute: '#737373', line: '#262626', line2: '#333333',
-  accent: '#fbbf24', accent2: '#fb923c', danger: '#ef4444', success: '#34d399',
-  blue: '#60a5fa', purple: '#a78bfa'
-};
 const TONE_TO_CLASS = { danger: 'danger', success: 'success', accent: 'accent', warn: 'accent-2', mute: 'mute' };
 const PILL_BY_CLASS = { danger: 'pill-danger', warn: 'pill-warn', accent: 'pill-accent', success: 'pill-success', mute: 'pill-mute' };
 
-Chart.defaults.font.family = "'IBM Plex Sans KR', sans-serif";
-Chart.defaults.color = COLORS.dim;
-Chart.defaults.borderColor = COLORS.line;
-const noLegend = { plugins: { legend: { display: false } } };
-const gridStyle = { grid: { color: COLORS.line, drawBorder: false }, ticks: { color: COLORS.dim, font: { size: 11, family: 'JetBrains Mono' } } };
-const gridStyleNoX = { grid: { display: false }, ticks: { color: COLORS.dim, font: { size: 11 } } };
-
-// ============================================================
-// LOAD ALL DATA
-// ============================================================
-const dataFiles = ['overview', 'patterns', 'ratio', 'delta', 'structure', 'cases', 'matrix', 'deep-cases', 'policy', 'sources'];
-Promise.all(dataFiles.map(f => fetch(`data/${f}.json`).then(r => { if (!r.ok) throw new Error(f); return r.json(); })))
-  .then(([overview, patterns, ratio, delta, structure, cases, matrix, deepCases, policy, sources]) => {
-    renderMeta(overview);
-    renderHero(patterns.hero);
-    renderTwoFaces(patterns.two_faces);
-    renderPatterns(patterns.patterns);
-    renderLoopholes(patterns.loopholes);
-    renderCases(cases);
-    renderRatioSection(ratio);
-    renderMatrix(matrix);
-    renderDeep(deepCases);
-    renderPolicy(policy);
-    renderSides(policy);
-    renderDelta(delta);
-    renderStructure(structure);
-    renderTrend(overview);
-    renderZero(deepCases);
-    renderSources(sources);
+Promise.all([
+  fetch('data/overview.json').then(r => r.json()),
+  fetch('data/patterns.json').then(r => r.json()),
+  fetch('data/cases.json').then(r => r.json())
+])
+  .then(([overview, patterns, cases]) => {
+    document.getElementById('meta-period').textContent = `— v${overview.version} · ${overview.period}`;
     document.getElementById('ts').textContent = overview.generated;
+    renderHero(patterns.hero);
+    renderCases(cases);
   })
-  .catch(err => {
-    console.error('Data load error:', err);
-    document.getElementById('error-box').style.display = 'block';
-  });
-
-// ============================================================
-// RENDER FUNCTIONS
-// ============================================================
-function renderMeta(d) {
-  document.getElementById('meta-period').textContent = `— ${d.period}`;
-  document.getElementById('meta-line').innerHTML = `
-    <span>v${d.version} 작성 ${d.generated}</span>
-    <span>분석 기간 ${d.period}</span>
-    <span>1차 자료 ${d.sources_primary.join(' · ')}</span>
-    <span>2차 자료 ${d.sources_secondary.join(' · ')}</span>`;
-}
-
-function renderKPI(d) {
-  // (legacy) — hero로 대체됨, 호출 안 함
-  document.getElementById('kpi-grid').innerHTML = d.kpi.map(k => `
-    <div class="card p-5">
-      <div class="mono text-3xl font-bold mb-1 ${k.tone ? TONE_TO_CLASS[k.tone] : ''}">${k.value}<span class="text-base dim ml-1">${k.unit}</span></div>
-      <div class="text-xs dim leading-snug">${k.label}</div>
-    </div>`).join('');
-}
+  .catch(err => { console.error(err); document.getElementById('error-box').style.display = 'block'; });
 
 function renderHero(d) {
   document.getElementById('hero-headline').textContent = d.headline;
@@ -425,87 +213,6 @@ function renderHero(d) {
       <div class="text-xs dim leading-snug">${s.label}</div>
     </div>`;
   }).join('');
-}
-
-function renderTwoFaces(d) {
-  document.getElementById('two-faces-title').textContent = d.title;
-  document.getElementById('two-faces-sub').textContent = d.subtitle;
-
-  const officialHTML = `
-    <div class="flex items-center gap-2 mb-4">
-      <div class="w-2 h-2 rounded-full" style="background: var(--success)"></div>
-      <h3 class="font-bold text-lg">${d.official.title}</h3>
-    </div>
-    <div class="space-y-1">
-      ${d.official.items.map(it => `
-        <div class="stat-line">
-          <div class="flex-1">
-            <div class="text-sm">${it.label}</div>
-            ${it.note ? `<div class="text-xs mute mt-1">${it.note}</div>` : ''}
-          </div>
-          <div class="mono text-sm font-semibold success" style="text-align: right;">${it.value}</div>
-        </div>`).join('')}
-    </div>`;
-  document.getElementById('two-faces-official').innerHTML = officialHTML;
-
-  const shadowHTML = `
-    <div class="flex items-center gap-2 mb-4">
-      <div class="w-2 h-2 rounded-full" style="background: var(--danger)"></div>
-      <h3 class="font-bold text-lg">${d.shadow.title}</h3>
-    </div>
-    <div class="space-y-1">
-      ${d.shadow.items.map(it => `
-        <div class="stat-line">
-          <div class="flex-1">
-            <div class="text-sm">${it.label}</div>
-            ${it.note ? `<div class="text-xs mute mt-1">${it.note}</div>` : ''}
-          </div>
-          <div class="mono text-sm font-semibold danger" style="text-align: right;">${it.value}</div>
-        </div>`).join('')}
-    </div>`;
-  document.getElementById('two-faces-shadow').innerHTML = shadowHTML;
-}
-
-function renderPatterns(d) {
-  document.getElementById('patterns-title').textContent = d.title;
-  document.getElementById('patterns-sub').textContent = d.subtitle;
-  document.getElementById('patterns-list').innerHTML = d.rows.map((r, i) => `
-    <details class="card p-6" ${i === 0 ? 'open' : ''}>
-      <summary>
-        <div class="flex items-start justify-between gap-4">
-          <div class="flex items-start gap-3 flex-1">
-            <span class="chev accent mono mt-1">▶</span>
-            <h3 class="text-lg font-bold">${r.pattern}</h3>
-          </div>
-          <span class="pill ${PILL_BY_CLASS[r.tone] || 'pill-mute'} shrink-0">${r.instances.length}건</span>
-        </div>
-      </summary>
-      <div class="mt-5 ml-7 space-y-3">
-        ${r.instances.map(inst => `
-          <div class="card-3 p-4 flex items-start gap-3">
-            <span class="pill pill-mute shrink-0">${inst.group}</span>
-            <div class="flex-1 text-sm dim leading-relaxed">${inst.detail}</div>
-            ${inst.url ? `<a href="${inst.url}" class="mono text-xs accent shrink-0">상세 →</a>` : '<span class="mono text-xs mute shrink-0">미작성</span>'}
-          </div>`).join('')}
-      </div>
-    </details>`).join('');
-  document.getElementById('patterns-footer').innerHTML = `<span class="accent mono uppercase tracking-wider mr-2">읽기</span>${d.footer_note}`;
-}
-
-function renderLoopholes(d) {
-  document.getElementById('loopholes-title').textContent = d.title;
-  document.getElementById('loopholes-sub').textContent = d.subtitle;
-  document.getElementById('loopholes-grid').innerHTML = d.rows.map(r => `
-    <div class="card p-6" style="border-color: var(--danger);">
-      <h3 class="font-bold mb-3">${r.loophole}</h3>
-      <p class="text-sm dim leading-relaxed mb-4">${r.summary}</p>
-      <div class="card-3 p-3">
-        <div class="text-xs mute mono uppercase tracking-wider mb-1">대표 케이스</div>
-        <div class="text-sm">${r.case}</div>
-        ${r.url ? `<a href="${r.url}" class="mono text-xs accent mt-2 inline-block">→ 케이스 페이지</a>` : ''}
-      </div>
-    </div>`).join('');
-  document.getElementById('loopholes-footer').innerHTML = `<span class="danger mono uppercase tracking-wider mr-2">맥락</span>${d.footer_note}`;
 }
 
 function renderCases(d) {
@@ -531,250 +238,6 @@ function renderCases(d) {
   }).join('');
   document.getElementById('cases-extra').innerHTML = `<span class="accent mono uppercase tracking-wider mr-2">참고</span>${d.extra_gc_nokvit}`;
 }
-
-function renderRatioSection(d) {
-  document.getElementById('ratio-meta').textContent = `「수입 대비 본래 목적사업에 직접 쓴 비용」 — ${d.universe} (${d.source})`;
-  document.getElementById('kcc-note').innerHTML = `<span class="accent">참고 — </span>KCC 산하 ${d.kcc_detail.재단.join('·')} 2곳 합산: 2024년 사업수입 ${d.kcc_detail['2024_수입_억']}억원, 사업수행비용 ${d.kcc_detail['2024_사업비_억']}억원(1.4%). ${d.kcc_detail.서전문화재단_수입_변화}이지만 사업비는 ${d.kcc_detail.서전문화재단_사업비_변화}.`;
-
-  let ratioChart;
-  const ctxRatio = document.getElementById('chart-ratio').getContext('2d');
-  function renderRatio(mode) {
-    const data = mode === 'low' ? d.low : d.high;
-    const labels = data.map(x => x.group);
-    const values = data.map(x => x.ratio);
-    const colors = mode === 'low' ? values.map(v => v < 25 ? COLORS.danger : v < 40 ? COLORS.accent2 : COLORS.accent) : values.map(v => v >= 100 ? COLORS.success : COLORS.blue);
-    if (ratioChart) ratioChart.destroy();
-    ratioChart = new Chart(ctxRatio, {
-      type: 'bar',
-      data: { labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 0, borderRadius: 2, barThickness: 18 }] },
-      options: { indexAxis: 'y', maintainAspectRatio: false, ...noLegend,
-        plugins: { legend: { display: false }, tooltip: { backgroundColor: COLORS.bg3, borderColor: COLORS.line, borderWidth: 1, padding: 10, titleColor: COLORS.text, bodyColor: COLORS.dim, callbacks: { label: c => `사업비 비율 ${c.parsed.x}%` } } },
-        scales: { x: { ...gridStyle, beginAtZero: true, ticks: { ...gridStyle.ticks, callback: v => v + '%' } }, y: gridStyleNoX }
-      }
-    });
-  }
-  renderRatio('low');
-
-  function setActiveTab(activeId) {
-    ['tab-low', 'tab-high', 'tab-all'].forEach(id => {
-      document.getElementById(id).className = (id === activeId ? 'tab-active' : 'tab-inactive') + ' px-3 py-2 rounded mono text-xs';
-    });
-  }
-  document.getElementById('tab-low').onclick = () => { setActiveTab('tab-low'); document.getElementById('view-chart').style.display = 'block'; document.getElementById('view-table').style.display = 'none'; renderRatio('low'); };
-  document.getElementById('tab-high').onclick = () => { setActiveTab('tab-high'); document.getElementById('view-chart').style.display = 'block'; document.getElementById('view-table').style.display = 'none'; renderRatio('high'); };
-  document.getElementById('tab-all').onclick = () => { setActiveTab('tab-all'); document.getElementById('view-chart').style.display = 'none'; document.getElementById('view-table').style.display = 'block'; };
-
-  // Table
-  const ALL_GROUPS = [
-    ...d.low.map(x => ({ group: x.group, ratio: x.ratio, band: '하위 (50% 미만)' })),
-    ...d.high.map(x => ({ group: x.group, ratio: x.ratio, band: '상위 (99% 이상)' }))
-  ];
-  let sortKey = 'ratio', sortDir = 'desc', searchTerm = '';
-  function renderTable() {
-    let rows = [...ALL_GROUPS];
-    if (searchTerm) rows = rows.filter(r => r.group.toLowerCase().includes(searchTerm.toLowerCase()));
-    rows.sort((a, b) => {
-      let av = a[sortKey], bv = b[sortKey];
-      if (typeof av === 'string') return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
-      return sortDir === 'asc' ? av - bv : bv - av;
-    });
-    document.getElementById('table-body').innerHTML = rows.map((r, i) => {
-      const colorClass = r.ratio < 25 ? 'danger' : r.ratio < 50 ? 'accent-2' : r.ratio < 100 ? 'dim' : 'success';
-      const pillClass = r.ratio < 50 ? 'pill-danger' : 'pill-success';
-      return `<tr class="border-b border-line"><td class="p-3 mono mute">${i+1}</td><td class="p-3 font-semibold">${r.group}</td><td class="p-3 text-right mono ${colorClass}">${r.ratio}%</td><td class="p-3"><span class="pill ${pillClass}">${r.band}</span></td></tr>`;
-    }).join('') + `<tr><td colspan="4" class="p-4 text-center text-xs dim">${d.unknown_band} (${d.unknown_count}개 그룹)</td></tr>`;
-  }
-  renderTable();
-  document.getElementById('search-input').addEventListener('input', e => { searchTerm = e.target.value; renderTable(); });
-  document.querySelectorAll('.sortable').forEach(th => {
-    th.addEventListener('click', () => {
-      const key = th.dataset.sort;
-      if (sortKey === key) sortDir = sortDir === 'asc' ? 'desc' : 'asc'; else { sortKey = key; sortDir = 'desc'; }
-      document.querySelectorAll('.sortable').forEach(t => t.classList.remove('sort-asc', 'sort-desc'));
-      th.classList.add('sort-' + sortDir);
-      renderTable();
-    });
-  });
-}
-
-function renderMatrix(d) {
-  document.getElementById('matrix-body').innerHTML = d.rows.map(r => `
-    <tr class="border-b border-line">
-      <td class="matrix-cell">${r.그룹}</td>
-      <td class="matrix-cell">${r.재단}</td>
-      <td class="matrix-cell">${r.보유계열사}</td>
-      <td class="matrix-cell text-right mono">${r.지분율}</td>
-      <td class="matrix-cell"><span class="pill ${PILL_BY_CLASS[r.상태_class] || 'pill-mute'}">${r.상태}</span></td>
-      <td class="matrix-cell dim">${r.사유}</td>
-    </tr>`).join('');
-}
-
-function renderDeep(d) {
-  document.getElementById('deep-list').innerHTML = d.cases.map(c => `
-    <details class="card p-6">
-      <summary>
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <span class="chev accent mono">▶</span>
-            <div>
-              <div class="mono text-xs mute uppercase mb-1">CASE ${c.no} · ${c.group}</div>
-              <h3 class="text-lg font-bold">${c.title}</h3>
-            </div>
-          </div>
-          <span class="pill ${PILL_BY_CLASS[c.tag_class] || 'pill-mute'}">${c.tag}</span>
-        </div>
-      </summary>
-      <div class="mt-6 ml-7 text-sm dim leading-relaxed space-y-4">
-        <div class="timeline-line">
-          ${c.timeline.map(t => `<div class="timeline-item ${t.dim ? 'dim' : ''}"><span class="mono ${t.dim ? 'mute' : 'accent'} text-xs mr-3">${t.year}</span>${t.text}</div>`).join('')}
-        </div>
-        <div class="quote text-xs">"${c.summary_quote}" — ${c.summary_source}</div>
-        ${c.extra ? `<p class="text-xs">${c.extra}</p>` : ''}
-      </div>
-    </details>`).join('');
-}
-
-function renderPolicy(d) {
-  document.getElementById('policy-grid').innerHTML = `
-    <div class="card p-6">
-      <h3 class="font-semibold mb-4 flex items-center gap-2"><span class="w-2 h-2 rounded-full" style="background: var(--blue)"></span>${d.tax_limit.title}</h3>
-      <table class="w-full text-sm">
-        <thead><tr class="border-b border-line"><th class="text-left p-2">구분</th><th class="text-right p-2">한도</th></tr></thead>
-        <tbody>${d.tax_limit.rows.map(r => `<tr class="border-b border-line"><td class="p-2 ${r.dim ? 'dim' : ''}">${r.구분}</td><td class="p-2 text-right mono ${r.tone ? TONE_TO_CLASS[r.tone] : ''} ${r.dim ? 'dim' : ''}">${r.한도}</td></tr>`).join('')}</tbody>
-      </table>
-      <p class="text-xs dim mt-4 leading-relaxed">${d.tax_limit.note}</p>
-    </div>
-    <div class="card p-6">
-      <h3 class="font-semibold mb-4 flex items-center gap-2"><span class="w-2 h-2 rounded-full" style="background: var(--accent)"></span>${d.voting_limit.title}</h3>
-      <div class="grid grid-cols-4 gap-2 mb-4">
-        ${d.voting_limit.stages.map(s => {
-          const borderStyle = s.tone === 'accent2' ? 'border-color: var(--accent-2)' : s.tone === 'accent' ? 'border-color: var(--accent)' : s.tone === 'danger' ? 'border-color: var(--danger)' : '';
-          const numClass = s.tone === 'danger' ? 'danger' : '';
-          return `<div class="card-3 p-3 text-center" style="${borderStyle}"><div class="text-xs mute mono mb-1">${s.year}</div><div class="mono text-2xl font-bold ${numClass}">${s.limit}<span class="text-sm dim">%</span></div></div>`;
-        }).join('')}
-      </div>
-      <p class="text-xs dim leading-relaxed">${d.voting_limit.note}</p>
-    </div>`;
-
-  document.getElementById('policy-context').innerHTML = `
-    <div class="grid md:grid-cols-3 gap-4 text-sm">
-      ${d.context_cards.map(c => `<div><div class="mono text-xs uppercase mute mb-2">${c.title}</div><p class="dim leading-relaxed text-xs">${c.text}</p></div>`).join('')}
-    </div>`;
-}
-
-function renderSides(d) {
-  document.getElementById('sides-grid').innerHTML = `
-    <div class="card p-6">
-      <div class="flex items-center gap-2 mb-3"><div class="w-2 h-2 rounded-full" style="background: var(--blue)"></div><span class="mono text-xs uppercase mute">시민단체 · 학계</span></div>
-      <h3 class="font-semibold mb-3">${d.civic_view.title}</h3>
-      <div class="space-y-3 text-sm dim">${d.civic_view.paragraphs.map(p => `<p class="leading-relaxed">${p}</p>`).join('')}</div>
-    </div>
-    <div class="card p-6">
-      <div class="flex items-center gap-2 mb-3"><div class="w-2 h-2 rounded-full" style="background: var(--accent)"></div><span class="mono text-xs uppercase mute">재계 · 한경연</span></div>
-      <h3 class="font-semibold mb-3">${d.industry_view.title}</h3>
-      <div class="space-y-3 text-sm dim">${d.industry_view.paragraphs.map(p => `<p class="leading-relaxed">${p}</p>`).join('')}</div>
-    </div>`;
-}
-
-function renderDelta(d) {
-  function barChart(canvasId, data, color, sign) {
-    new Chart(document.getElementById(canvasId).getContext('2d'), {
-      type: 'bar',
-      data: { labels: data.map(x => x.group), datasets: [{ data: data.map(x => Math.abs(x.change)), backgroundColor: color, borderWidth: 0, borderRadius: 2, barThickness: 16 }] },
-      options: { indexAxis: 'y', maintainAspectRatio: false, ...noLegend,
-        plugins: { legend: { display: false }, tooltip: { backgroundColor: COLORS.bg3, borderColor: COLORS.line, borderWidth: 1, padding: 10, titleColor: COLORS.text, bodyColor: COLORS.dim, callbacks: { label: c => `${sign}${c.parsed.x.toLocaleString()}억원` } } },
-        scales: { x: { ...gridStyle, beginAtZero: true, ticks: { ...gridStyle.ticks, callback: v => sign + v.toLocaleString() } }, y: gridStyleNoX }
-      }
-    });
-  }
-  barChart('chart-down', d.down, COLORS.danger, '−');
-  barChart('chart-up', d.up, COLORS.success, '+');
-}
-
-function renderStructure(d) {
-  function donut(canvasId, data, colors) {
-    new Chart(document.getElementById(canvasId).getContext('2d'), {
-      type: 'doughnut',
-      data: { labels: data.map(x => x.label), datasets: [{ data: data.map(x => x.value), backgroundColor: colors, borderColor: COLORS.bg2, borderWidth: 2 }] },
-      options: { maintainAspectRatio: false, cutout: '60%',
-        plugins: {
-          legend: { position: 'right', labels: { color: COLORS.dim, font: { size: 11 }, padding: 8, boxWidth: 10, boxHeight: 10,
-            generateLabels: chart => chart.data.labels.map((label, i) => ({ text: `${label} ${chart.data.datasets[0].data[i]}%`, fillStyle: chart.data.datasets[0].backgroundColor[i], strokeStyle: chart.data.datasets[0].backgroundColor[i], lineWidth: 0, index: i }))
-          } },
-          tooltip: { backgroundColor: COLORS.bg3, borderColor: COLORS.line, borderWidth: 1, padding: 10, titleColor: COLORS.text, bodyColor: COLORS.dim, callbacks: { label: c => `${c.label} ${c.parsed}%` } }
-        }
-      }
-    });
-  }
-  donut('chart-asset', d.asset.구성, [COLORS.blue, COLORS.accent, COLORS.purple, COLORS.mute]);
-  donut('chart-income', d.income.구성, [COLORS.mute, COLORS.blue, COLORS.success, COLORS.danger]);
-  donut('chart-func', d.expense_function.구성, [COLORS.purple, COLORS.mute, COLORS.success, COLORS.blue]);
-}
-
-function renderTrend(d) {
-  new Chart(document.getElementById('chart-trend').getContext('2d'), {
-    type: 'bar',
-    data: { labels: d.trend_groups.labels, datasets: [
-      { label: '공시대상기업집단', data: d.trend_groups['공시대상기업집단'], backgroundColor: COLORS.blue, borderRadius: 2, barThickness: 28 },
-      { label: '소속 공익법인', data: d.trend_groups['소속 공익법인'], backgroundColor: COLORS.accent, borderRadius: 2, barThickness: 28 }
-    ] },
-    options: { maintainAspectRatio: false,
-      plugins: { legend: { position: 'top', labels: { color: COLORS.dim, font: { size: 11 }, boxWidth: 10, boxHeight: 10 } }, tooltip: { backgroundColor: COLORS.bg3, borderColor: COLORS.line, borderWidth: 1, padding: 10 } },
-      scales: { x: gridStyleNoX, y: gridStyle }
-    }
-  });
-  new Chart(document.getElementById('chart-trend2').getContext('2d'), {
-    type: 'bar',
-    data: { labels: d.trend_188.labels, datasets: [
-      { label: '사업수입 (조원)', data: d.trend_188['사업수입 (조원)'], backgroundColor: COLORS.blue, borderRadius: 2, barThickness: 48 },
-      { label: '사업수행비용 (조원)', data: d.trend_188['사업수행비용 (조원)'], backgroundColor: COLORS.accent, borderRadius: 2, barThickness: 48 }
-    ] },
-    options: { maintainAspectRatio: false,
-      plugins: { legend: { position: 'top', labels: { color: COLORS.dim, font: { size: 11 }, boxWidth: 10, boxHeight: 10 } }, tooltip: { backgroundColor: COLORS.bg3, borderColor: COLORS.line, borderWidth: 1, padding: 10, callbacks: { label: c => `${c.dataset.label}: ${c.parsed.y}조원` } } },
-      scales: { x: gridStyleNoX, y: { ...gridStyle, ticks: { ...gridStyle.ticks, callback: v => v + '조' } } }
-    }
-  });
-}
-
-function renderZero(d) {
-  document.getElementById('zero-grid').innerHTML = d.zero_cases.map(z => `
-    <div class="card p-6">
-      <span class="text-xs mono uppercase mute">${z.group}</span>
-      <h3 class="text-xl font-bold mt-1 mb-3">${z.재단}</h3>
-      <div class="grid grid-cols-2 gap-2 mb-4">
-        ${z.stats.map(s => {
-          const border = s.tone === 'danger' ? 'border-color: var(--danger)' : '';
-          const span = s.label.includes('사업수행비용') ? 'col-span-2' : '';
-          return `<div class="card-3 p-3 ${span}" style="${border}"><div class="text-xs mute mono mb-1">${s.label}</div><div class="mono font-semibold ${s.tone ? TONE_TO_CLASS[s.tone] : ''}">${s.value}</div></div>`;
-        }).join('')}
-      </div>
-      <p class="text-xs dim leading-relaxed">${z.note}</p>
-    </div>`).join('');
-}
-
-function renderSources(d) {
-  document.getElementById('sources-box').innerHTML = d.groups.map(g => `
-    <div><span class="accent mono text-xs uppercase tracking-wider mr-2">${g.label}</span>${g.items.map(it => `<a href="${it.url}" target="_blank">${it.title}</a>`).join(' · ')}</div>
-  `).join('');
-}
-
-// ============================================================
-// SIDEBAR NAV
-// ============================================================
-const navLinks = document.querySelectorAll('.nav-link');
-const sections = document.querySelectorAll('section[id]');
-function highlight() {
-  let current = '';
-  sections.forEach(s => { if (s.getBoundingClientRect().top <= 120) current = s.id; });
-  navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + current));
-}
-window.addEventListener('scroll', highlight);
-highlight();
-navLinks.forEach(link => link.addEventListener('click', e => {
-  e.preventDefault();
-  const target = document.querySelector(link.getAttribute('href'));
-  if (target) target.scrollIntoView({ behavior: 'smooth' });
-}));
 </script>
 
 </body>
